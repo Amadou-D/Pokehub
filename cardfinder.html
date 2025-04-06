@@ -1,117 +1,344 @@
-      
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon TCG Card Finder</title>
+    <title>Pokémon TCG Dex</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --pokemon-red: #FF0000;
+            --pokemon-blue: #3B4CCA;
+            --pokemon-yellow: #FFDE00;
+            --dark-charcoal: #333333;
+            --medium-grey: #666666;
+            --light-grey: #f0f0f0;
+            --white: #ffffff;
+            --border-radius: 8px;
+            --card-width: 245px; /* Standard card width */
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: sans-serif;
+            font-family: 'Lato', sans-serif;
             line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Subtle gradient */
+            color: var(--dark-charcoal);
             padding: 20px;
-            background-color: #f0f0f0;
-            color: #333;
+            min-height: 100vh;
         }
+
         #container {
-            max-width: 90%;
-            margin: 20px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 1200px; /* Wider container for more cards */
+            margin: 30px auto;
+            background: var(--white);
+            padding: 30px 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
         }
+        #container:hover {
+             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
         h1 {
+            font-family: 'Press Start 2P', cursive; /* Pixel font */
             text-align: center;
-            color: #e4000f; /* Pokemon Red */
-            margin-bottom: 25px;
+            color: var(--pokemon-red);
+            font-size: clamp(1.8rem, 5vw, 2.5rem); /* Responsive font size */
+            margin-bottom: 35px;
+            text-shadow: 2px 2px var(--pokemon-yellow);
         }
+
         #search-controls {
-            text-align: center;
-            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column; /* Stack label and input/button */
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 15px; /* Space between label and input group */
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
+
+        #search-controls label {
             font-weight: bold;
+            color: var(--medium-grey);
+            font-size: 1.1rem;
         }
-        input[type="text"] {
-            padding: 12px;
-            width: calc(100% - 26px); /* Account for padding */
-            max-width: 350px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
+
+        .input-group {
+            display: flex;
+            width: 100%;
+            max-width: 500px; /* Limit width of search group */
         }
-        button {
-            padding: 12px 25px;
-            background-color: #3b4cca; /* Pokemon Blue */
+
+        #pokemonName {
+            flex-grow: 1; /* Input takes available space */
+            padding: 14px 18px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius) 0 0 var(--border-radius); /* Round left corners */
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+        #pokemonName:focus {
+            border-color: var(--pokemon-blue);
+        }
+
+        #searchButton {
+            padding: 14px 25px;
+            background-color: var(--pokemon-blue);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0; /* Round right corners */
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1rem;
+            font-weight: bold;
             transition: background-color 0.3s ease;
+            white-space: nowrap; /* Prevent button text wrapping */
         }
-        button:hover {
-            background-color: #ffde00; /* Pokemon Yellow */
-            color: #333;
+        #searchButton:hover {
+            background-color: var(--pokemon-yellow);
+            color: var(--dark-charcoal);
         }
+
+        /* Results Area */
         #results {
-            margin-top: 20px;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 30px;
             border-top: 1px solid #eee;
-            display: flex; /* Use flexbox for layout */
-            flex-wrap: wrap; /* Allow items to wrap to the next line */
-            gap: 15px; /* Space between card images */
-            justify-content: center; /* Center cards horizontally */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px; /* Increased gap */
+            justify-content: center;
+            min-height: 150px; /* Prevent collapsing when empty */
+            position: relative; /* For loader positioning */
         }
+
+        /* Card Styling */
+        .card-container {
+            background-color: var(--white);
+            border-radius: 12px; /* Slightly more rounded */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            width: var(--card-width);
+            overflow: hidden; /* Ensure info stays within bounds */
+        }
+        .card-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
         .card-image {
-            width: 245px; /* Standard card width */
-            height: auto; /* Maintain aspect ratio */
-            border-radius: 10px; /* Rounded corners like cards */
-            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease-in-out;
+            display: block; /* Remove extra space below image */
+            width: 100%; /* Make image fill container width */
+            height: auto;
             background-color: #eee; /* Placeholder bg */
+            cursor: pointer; /* Indicate it's clickable */
         }
-        .card-image:hover {
-            transform: scale(1.05); /* Slight zoom on hover */
+
+        .card-info {
+            padding: 12px;
+            font-size: 0.85rem;
+            text-align: center;
+            background-color: #f9f9f9; /* Subtle background for info */
         }
+        .card-info strong {
+            color: var(--pokemon-blue);
+            display: block; /* Make label take full width */
+            margin-bottom: 3px;
+        }
+        .card-info span {
+            color: var(--medium-grey);
+        }
+
+        /* Loading Indicator (Poké Ball) */
+        #loader {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 50px; /* Position within results area */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid var(--dark-charcoal);
+            background: linear-gradient(to bottom, var(--pokemon-red) 0%, var(--pokemon-red) 48%, var(--dark-charcoal) 48%, var(--dark-charcoal) 52%, var(--white) 52%, var(--white) 100%);
+            animation: spin 1s linear infinite;
+            box-shadow: inset 0 0 0 4px var(--dark-charcoal), 0 0 10px rgba(0,0,0,0.2);
+        }
+        #loader::before { /* Inner button */
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            background-color: var(--white);
+            border: 4px solid var(--dark-charcoal);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Messages */
         .message {
             width: 100%;
             text-align: center;
+            font-size: 1.1rem;
+            color: var(--medium-grey);
+            padding: 30px 15px;
             font-style: italic;
-            color: #555;
-            padding: 20px;
         }
         .error {
-            color: red;
+            color: var(--pokemon-red);
             font-weight: bold;
+            font-style: normal;
+            background-color: #ffebeb;
+            border: 1px solid var(--pokemon-red);
+            border-radius: var(--border-radius);
         }
+
+        /* Modal Styling */
+        #modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+            cursor: pointer; /* Indicate clicking outside closes */
+            padding-top: 50px; /* Space from top */
+        }
+
+        #modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 350px; /* Limit max width */
+            cursor: default; /* Default cursor for the image itself */
+        }
+
+        #modal-image {
+            width: 100%;
+            height: auto;
+            border-radius: 15px; /* Rounded corners for large image */
+        }
+
+        #close-modal {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            user-select: none; /* Prevent selecting the 'X' */
+        }
+        #close-modal:hover,
+        #close-modal:focus {
+            color: var(--pokemon-yellow);
+            text-decoration: none;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            #container {
+                padding: 20px;
+                margin: 15px auto;
+            }
+            h1 {
+                font-size: 1.6rem;
+                 text-shadow: 1px 1px var(--pokemon-yellow);
+            }
+            .input-group {
+                 flex-direction: column; /* Stack input and button vertically */
+                 max-width: 90%;
+                 gap: 10px;
+            }
+            #pokemonName {
+                 border-radius: var(--border-radius); /* Full radius */
+                 text-align: center;
+            }
+            #searchButton {
+                border-radius: var(--border-radius); /* Full radius */
+                width: 100%;
+            }
+            #results {
+                gap: 15px;
+            }
+            .card-container {
+                 width: calc(50% - 10px); /* Two cards per row approx */
+                 /* Adjust card width for smaller screens if needed */
+                 /* width: clamp(150px, 45%, var(--card-width)); */
+            }
+             /* Make modal image slightly smaller on mobile */
+             #modal-content {
+                max-width: 300px;
+             }
+        }
+         @media (max-width: 400px) {
+             .card-container {
+                  width: calc(100% - 10px); /* One card per row */
+             }
+         }
+
     </style>
 </head>
 <body>
 
     <div id="container">
-        <h1>Pokémon TCG Card Finder</h1>
+        <h1>Pokémon TCG Dex</h1>
 
         <div id="search-controls">
             <label for="pokemonName">Enter Pokémon Name:</label>
-            <input type="text" id="pokemonName" placeholder="e.g., Pikachu">
-            <button id="searchButton">Search Cards</button>
+            <div class="input-group">
+                <input type="text" id="pokemonName" placeholder="e.g., Pikachu, Charizard, Eevee">
+                <button id="searchButton">Search</button>
+            </div>
         </div>
 
+        <!-- Loading Indicator -->
+        <div id="loader"></div>
+
         <div id="results">
-            <p class="message">Enter a Pokémon name and click Search to see available cards.</p>
-            <!-- Card images will be displayed here -->
+            <p class="message">Enter a Pokémon name and click Search to find TCG cards!</p>
+            <!-- Card results will be dynamically inserted here -->
         </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="modal">
+      <span id="close-modal" title="Close">×</span>
+      <div id="modal-content">
+        <img id="modal-image" src="" alt="Large Card Image">
+      </div>
     </div>
 
     <script>
         const nameInput = document.getElementById('pokemonName');
         const searchButton = document.getElementById('searchButton');
         const resultsDiv = document.getElementById('results');
+        const loader = document.getElementById('loader');
+        const modal = document.getElementById('modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeModalSpan = document.getElementById('close-modal');
+        let currentAbortController = null; // To cancel previous requests
 
         // Function to fetch and display cards
         async function searchPokemonCards() {
@@ -122,73 +349,159 @@
                 return;
             }
 
-            // Use the pokemontcg.io API v2
-            // We add a wildcard (*) to catch variations like "Pikachu V", "Pikachu VMAX" etc.
-            // We also add `orderBy=name` to get a somewhat logical order
-            const apiUrl = `https://api.pokemontcg.io/v2/cards?q=name:"${pokemonName}*"&orderBy=name`;
+            // Abort previous fetch request if it exists
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            // Create a new AbortController for the current request
+            currentAbortController = new AbortController();
+            const signal = currentAbortController.signal;
 
-            resultsDiv.innerHTML = '<p class="message">Searching for cards...</p>';
+            // Clear results and show loader
+            resultsDiv.innerHTML = '';
+            loader.style.display = 'block'; // Show loader
+
+            // Use the pokemontcg.io API v2
+            const apiUrl = `https://api.pokemontcg.io/v2/cards?q=name:"${pokemonName}*"&orderBy=set.releaseDate,name&pageSize=60`; // Order by release date then name, limit page size
+
 
             try {
-                const response = await fetch(apiUrl);
+                const response = await fetch(apiUrl, { signal }); // Pass the signal to fetch
+
+                loader.style.display = 'none'; // Hide loader once response starts
 
                 if (!response.ok) {
-                    // Try to get more specific error from API if possible
-                    let errorMsg = `API error: ${response.status}`;
+                    // Handle API errors more gracefully
+                    let errorMsg = `API error (${response.status})`;
                     try {
                         const errorData = await response.json();
                         if (errorData && errorData.error && errorData.error.message) {
-                           errorMsg += ` - ${errorData.error.message}`;
+                           errorMsg += `: ${errorData.error.message}`;
+                        } else {
+                            errorMsg += `. ${response.statusText}`;
                         }
-                    } catch (e) { /* Ignore if response is not JSON */ }
+                    } catch (e) { /* Ignore if response is not JSON */
+                        errorMsg += `. ${response.statusText}`;
+                     }
                     throw new Error(errorMsg);
                 }
 
-                const data = await response.json(); // The API response structure has a 'data' array
-
-                displayCards(data.data); // Pass the array of cards
+                const data = await response.json();
+                displayCards(data.data, pokemonName); // Pass the array of cards and the searched name
 
             } catch (error) {
-                console.error("Error fetching Pokémon cards:", error);
-                resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please try again.</p>`;
+                loader.style.display = 'none'; // Hide loader on error
+
+                if (error.name === 'AbortError') {
+                    console.log('Fetch aborted'); // Don't show error message if aborted by user action
+                    // Optionally clear results or leave them as they were
+                     resultsDiv.innerHTML = '<p class="message">Search cancelled.</p>';
+                } else {
+                    console.error("Error fetching Pokémon cards:", error);
+                    resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Check the name or try again later.</p>`;
+                }
+            } finally {
+                 // Ensure the loader is hidden regardless of success or failure (unless aborted)
+                 if (loader.style.display === 'block' && error?.name !== 'AbortError') {
+                     loader.style.display = 'none';
+                 }
+                currentAbortController = null; // Reset controller after fetch completes or fails
             }
         }
 
-        // Function to display the card images
-        function displayCards(cards) {
+        // Function to display the card images and info
+        function displayCards(cards, searchedName) {
             resultsDiv.innerHTML = ''; // Clear previous results or messages
 
             if (!cards || cards.length === 0) {
-                resultsDiv.innerHTML = `<p class="message">No cards found for "${nameInput.value.trim()}".</p>`;
+                resultsDiv.innerHTML = `<p class="message">No cards found matching "${searchedName}".</p>`;
                 return;
             }
 
             cards.forEach(card => {
                 if (card.images && card.images.small) {
+                    // Create card container
+                    const cardContainer = document.createElement('div');
+                    cardContainer.classList.add('card-container');
+
+                    // Create image element
                     const img = document.createElement('img');
-                    img.src = card.images.small; // Use the small image URL
-                    img.alt = `Card: ${card.name} - Set: ${card.set.name}`; // Alt text for accessibility
-                    img.title = `Name: ${card.name}\nSet: ${card.set.name}\nRarity: ${card.rarity || 'N/A'}`; // Tooltip on hover
+                    img.src = card.images.small;
+                    img.alt = `Card: ${card.name} - Set: ${card.set.name}`;
+                    img.title = `Click to enlarge\nName: ${card.name}\nSet: ${card.set.name}\nRarity: ${card.rarity || 'N/A'}`;
                     img.classList.add('card-image');
-                    resultsDiv.appendChild(img);
+                    img.loading = 'lazy'; // Lazy load images
+
+                    // Add click listener to image for modal
+                    img.addEventListener('click', () => {
+                        openModal(card.images.large); // Use large image for modal
+                    });
+
+                    // Create info div
+                    const infoDiv = document.createElement('div');
+                    infoDiv.classList.add('card-info');
+                    infoDiv.innerHTML = `
+                        <strong>${card.set.name}</strong>
+                        <span>Rarity: ${card.rarity || 'Common'}</span>
+                    `; // Default to Common if rarity is missing
+
+                    // Append image and info to container
+                    cardContainer.appendChild(img);
+                    cardContainer.appendChild(infoDiv);
+
+                    // Append container to results
+                    resultsDiv.appendChild(cardContainer);
                 }
             });
+        }
+
+        // --- Modal Functions ---
+        function openModal(imageUrl) {
+            modalImage.src = imageUrl; // Set the large image source
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            modalImage.src = ""; // Clear src to prevent showing old image briefly
         }
 
         // --- Event Listeners ---
         searchButton.addEventListener('click', searchPokemonCards);
 
-        // Allow pressing Enter in the input field to trigger search
         nameInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent potential form submission
+                event.preventDefault();
                 searchPokemonCards();
             }
         });
+
+        // Close modal listeners
+        closeModalSpan.addEventListener('click', closeModal);
+        modal.addEventListener('click', (event) => {
+             // Close if clicked outside the modal content (the image)
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        // Close modal with Escape key
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+
+        // Optional: Add a note about the API
+        const apiNote = document.createElement('p');
+        apiNote.style.textAlign = 'center';
+        apiNote.style.marginTop = '30px';
+        apiNote.style.fontSize = '0.8rem';
+        apiNote.style.color = '#888';
+        apiNote.innerHTML = 'Card data provided by <a href="https://pokemontcg.io/" target="_blank" rel="noopener noreferrer" style="color: inherit;">pokemontcg.io</a> API. Consider getting an API key for heavy usage.';
+        document.getElementById('container').appendChild(apiNote);
+
 
     </script>
 
 </body>
 </html>
-
-    
