@@ -268,12 +268,12 @@
         }
 
         /* Footer Credits Styling */
-        .page-footer {
-            width: 100%;
+        .page-footer { /* Renamed for clarity */
+            width: 100%; /* Ensure it takes width inside container */
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+            margin-top: 40px; /* Pushes down from results */
+            padding-top: 20px; /* Space above text */
+            border-top: 1px solid #eee; /* Separator line */
             font-size: 0.9rem;
             color: var(--medium-grey);
         }
@@ -291,7 +291,7 @@
             animation: pulse 1.5s infinite ease-in-out;
         }
         .page-footer .creator-name {
-            font-weight: bold;
+            font-weight: bold; /* Make name stand out slightly */
             color: var(--dark-charcoal);
         }
 
@@ -347,7 +347,7 @@
 <body>
 
     <div id="container">
-        <main>
+        <main> 
             <h1>Pokémon TCG Dex</h1>
 
             <div id="search-controls">
@@ -363,7 +363,7 @@
             <div id="results">
                 <p class="message">Enter a Pokémon name and click Search to find TCG cards!</p>
             </div>
-        </main>
+        </main> 
 
 
         <!-- Footer Area -->
@@ -391,7 +391,12 @@
         const footerElement = document.getElementById('page-footer');
         let currentAbortController = null;
 
-        // No API Key needed or used in this secure version
+        // --- API Key ---
+        // WARNING: Embedding API keys directly in client-side code is insecure!
+        // Anyone viewing the page source can see this key.
+        // For production apps, use a backend proxy to handle API requests securely.
+        const apiKey = "1bf4e5c1-a2bd-4a26-99c2-fb6c954cb5dd";
+        // --- End API Key ---
 
         async function searchPokemonCards() {
             const pokemonName = nameInput.value.trim();
@@ -407,19 +412,27 @@
             loader.style.display = 'block';
             const apiUrl = `https://api.pokemontcg.io/v2/cards?q=name:"${pokemonName}*"&orderBy=set.releaseDate,name&pageSize=60`;
 
-            // No headers object needed for unauthenticated requests
+            const headers = {};
+            if (apiKey) {
+                headers['X-Api-Key'] = apiKey;
+            }
 
             try {
-                // Fetch without the headers object
-                const response = await fetch(apiUrl, { signal }); // API Key / Headers removed
+                // Pass headers object to fetch
+                const response = await fetch(apiUrl, { signal, headers: headers });
 
                 loader.style.display = 'none';
                 if (!response.ok) {
                     let errorMsg = `API error (${response.status})`;
-                    try {
-                        const errorData = await response.json();
-                        errorMsg += (errorData?.error?.message) ? `: ${errorData.error.message}` : `. ${response.statusText}`;
-                    } catch (e) { errorMsg += `. ${response.statusText}`; }
+                     // Specifically check for 401 Unauthorized or 403 Forbidden, often related to API keys
+                     if (response.status === 401 || response.status === 403) {
+                        errorMsg += ` - Check API Key or Permissions.`;
+                     } else {
+                        try {
+                            const errorData = await response.json();
+                            errorMsg += (errorData?.error?.message) ? `: ${errorData.error.message}` : `. ${response.statusText}`;
+                        } catch (e) { errorMsg += `. ${response.statusText}`; }
+                    }
                     throw new Error(errorMsg);
                 }
                 const data = await response.json();
@@ -431,8 +444,7 @@
                     resultsDiv.innerHTML = '<p class="message">Search cancelled.</p>';
                 } else {
                     console.error("Error fetching Pokémon cards:", error);
-                    // Updated error message to be more generic as API key issues are not relevant here
-                    resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please check the name or API status.</p>`;
+                    resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please check the name or API configuration.</p>`;
                 }
             } finally {
                 if (loader.style.display === 'block' && error?.name !== 'AbortError') {
