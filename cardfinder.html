@@ -1,0 +1,194 @@
+      
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon TCG Card Finder</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        #container {
+            max-width: 90%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #e4000f; /* Pokemon Red */
+            margin-bottom: 25px;
+        }
+        #search-controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            padding: 12px;
+            width: calc(100% - 26px); /* Account for padding */
+            max-width: 350px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            padding: 12px 25px;
+            background-color: #3b4cca; /* Pokemon Blue */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #ffde00; /* Pokemon Yellow */
+            color: #333;
+        }
+        #results {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex; /* Use flexbox for layout */
+            flex-wrap: wrap; /* Allow items to wrap to the next line */
+            gap: 15px; /* Space between card images */
+            justify-content: center; /* Center cards horizontally */
+        }
+        .card-image {
+            width: 245px; /* Standard card width */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 10px; /* Rounded corners like cards */
+            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease-in-out;
+            background-color: #eee; /* Placeholder bg */
+        }
+        .card-image:hover {
+            transform: scale(1.05); /* Slight zoom on hover */
+        }
+        .message {
+            width: 100%;
+            text-align: center;
+            font-style: italic;
+            color: #555;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h1>Pokémon TCG Card Finder</h1>
+
+        <div id="search-controls">
+            <label for="pokemonName">Enter Pokémon Name:</label>
+            <input type="text" id="pokemonName" placeholder="e.g., Pikachu">
+            <button id="searchButton">Search Cards</button>
+        </div>
+
+        <div id="results">
+            <p class="message">Enter a Pokémon name and click Search to see available cards.</p>
+            <!-- Card images will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        const nameInput = document.getElementById('pokemonName');
+        const searchButton = document.getElementById('searchButton');
+        const resultsDiv = document.getElementById('results');
+
+        // Function to fetch and display cards
+        async function searchPokemonCards() {
+            const pokemonName = nameInput.value.trim();
+
+            if (!pokemonName) {
+                resultsDiv.innerHTML = '<p class="message error">Please enter a Pokémon name.</p>';
+                return;
+            }
+
+            // Use the pokemontcg.io API v2
+            // We add a wildcard (*) to catch variations like "Pikachu V", "Pikachu VMAX" etc.
+            // We also add `orderBy=name` to get a somewhat logical order
+            const apiUrl = `https://api.pokemontcg.io/v2/cards?q=name:"${pokemonName}*"&orderBy=name`;
+
+            resultsDiv.innerHTML = '<p class="message">Searching for cards...</p>';
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    // Try to get more specific error from API if possible
+                    let errorMsg = `API error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData && errorData.error && errorData.error.message) {
+                           errorMsg += ` - ${errorData.error.message}`;
+                        }
+                    } catch (e) { /* Ignore if response is not JSON */ }
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json(); // The API response structure has a 'data' array
+
+                displayCards(data.data); // Pass the array of cards
+
+            } catch (error) {
+                console.error("Error fetching Pokémon cards:", error);
+                resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please try again.</p>`;
+            }
+        }
+
+        // Function to display the card images
+        function displayCards(cards) {
+            resultsDiv.innerHTML = ''; // Clear previous results or messages
+
+            if (!cards || cards.length === 0) {
+                resultsDiv.innerHTML = `<p class="message">No cards found for "${nameInput.value.trim()}".</p>`;
+                return;
+            }
+
+            cards.forEach(card => {
+                if (card.images && card.images.small) {
+                    const img = document.createElement('img');
+                    img.src = card.images.small; // Use the small image URL
+                    img.alt = `Card: ${card.name} - Set: ${card.set.name}`; // Alt text for accessibility
+                    img.title = `Name: ${card.name}\nSet: ${card.set.name}\nRarity: ${card.rarity || 'N/A'}`; // Tooltip on hover
+                    img.classList.add('card-image');
+                    resultsDiv.appendChild(img);
+                }
+            });
+        }
+
+        // --- Event Listeners ---
+        searchButton.addEventListener('click', searchPokemonCards);
+
+        // Allow pressing Enter in the input field to trigger search
+        nameInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent potential form submission
+                searchPokemonCards();
+            }
+        });
+
+    </script>
+
+</body>
+</html>
+
+    
