@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon TCG Dex</title>
+
+    <!-- === Favicon Link === -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!-- === End Favicon Link === -->
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -200,14 +205,14 @@
         }
 
         /* --- Styling for the Market Link Button (TCGplayer) --- */
-        .market-link { /* Renamed from ebay-link */
+        .market-link {
             display: inline-block;
             margin-top: 5px;
             padding: 6px 12px;
             font-size: 0.8rem;
             font-weight: bold;
-            color: var(--dark-charcoal); /* Text color on light background */
-            background-color: var(--market-color); /* Use TCGplayer color */
+            color: var(--dark-charcoal);
+            background-color: var(--market-color);
             border: none;
             border-radius: 5px;
             text-decoration: none;
@@ -215,9 +220,9 @@
             cursor: pointer;
         }
         .market-link:hover {
-            background-color: var(--market-color-hover); /* Darker hover */
+            background-color: var(--market-color-hover);
             transform: translateY(-1px);
-            color: var(--dark-charcoal); /* Keep text color */
+            color: var(--dark-charcoal);
         }
         .market-link:active {
              transform: translateY(0px);
@@ -327,7 +332,6 @@
             clearPagination();
 
             const escapedTerm = currentSearchTerm.replace(/"/g, '\\"');
-            // Fetching TCGPlayer data is included by default, no need to change query
             const query = `(name:"${escapedTerm}*" OR set.name:"${escapedTerm}*")`;
             const apiUrl = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(query)}&orderBy=set.releaseDate,name&page=${page}&pageSize=${pageSize}`;
 
@@ -395,7 +399,6 @@
             }
 
             cards.forEach(card => {
-                // Check for essential card data
                 if (card.images?.small && card.name && card.set?.name) {
                     const cardContainer = document.createElement('div');
                     cardContainer.classList.add('card-container');
@@ -411,14 +414,10 @@
                     const infoDiv = document.createElement('div');
                     infoDiv.classList.add('card-info');
 
-                    // --- START: TCGplayer Link ---
-                    let marketLinkHTML = ''; // Initialize empty link HTML
-                    // Check if the tcgplayer data and URL exist in the API response
+                    let marketLinkHTML = '';
                     if (card.tcgplayer && card.tcgplayer.url) {
                         const tcgPlayerUrl = card.tcgplayer.url;
-                        // Add affiliate code if desired (replace YOUR_AFFILIATE_CODE)
-                        // const affiliateUrl = `${tcgPlayerUrl}?utm_campaign=affiliate&utm_medium=YOUR_AFFILIATE_CODE&utm_source=YOUR_AFFILIATE_CODE`;
-                        const affiliateUrl = tcgPlayerUrl; // Using direct link for now
+                        const affiliateUrl = tcgPlayerUrl;
 
                          marketLinkHTML = `
                             <a href="${affiliateUrl}" class="market-link" target="_blank" rel="noopener noreferrer" title="View ${card.name} from ${card.set.name} on TCGplayer">
@@ -426,12 +425,11 @@
                             </a>
                         `;
                     }
-                    // --- END: TCGplayer Link ---
 
                     infoDiv.innerHTML = `
                         <strong>${card.set.name}</strong>
                         <span>Rarity: ${card.rarity || 'Common'}</span>
-                        ${marketLinkHTML} 
+                        ${marketLinkHTML}
                     `;
 
                     cardContainer.appendChild(img);
@@ -483,7 +481,6 @@
             paginationControlsDiv.innerHTML = '';
         }
 
-        // Modal Functions
         function openModal(imageUrl) {
             if (imageUrl) {
                 modalImage.src = imageUrl;
@@ -497,7 +494,6 @@
              document.body.style.overflow = '';
         }
 
-        // Event Listeners
         searchButton.addEventListener('click', () => {
             fetchCards(searchInput.value, 1);
         });
@@ -509,7 +505,6 @@
             }
         });
 
-        // Modal close listeners
         closeModalSpan.addEventListener('click', closeModal);
         modal.addEventListener('click', (event) => {
             if (event.target === modal) {
@@ -522,8 +517,6 @@
             }
         });
 
-
-        // --- Updated Footer Credits ---
         function addFooterCredits() {
             if(footerElement) {
                 const currentYear = new Date().getFullYear();
