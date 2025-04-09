@@ -69,7 +69,7 @@
 
         main {
            flex-grow: 1;
-           position: relative; /* Needed for absolute positioning of children if we didn't use fixed */
+           position: relative;
         }
 
         h1 {
@@ -81,63 +81,72 @@
             text-shadow: 2px 2px var(--pokemon-yellow);
         }
 
+        /* --- Updated Search Controls Styling --- */
         #search-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; /* Arrange items horizontally */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: center; /* Center items */
+            align-items: flex-end; /* Align items to the bottom */
             margin-bottom: 40px;
-            gap: 15px;
+            gap: 20px; /* Spacing between elements */
+        }
+
+        .search-field-group {
+            display: flex;
+            flex-direction: column; /* Stack label and input */
+            gap: 5px; /* Space between label and input */
         }
 
         #search-controls label {
             font-weight: bold;
             color: var(--medium-grey);
-            font-size: 1.1rem;
+            font-size: 0.9rem; /* Slightly smaller label */
+            text-align: left; /* Align label text left */
+            margin-left: 3px; /* Small indent */
         }
 
-        .input-group {
-            display: flex;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        #searchInput {
-            flex-grow: 1;
-            padding: 14px 18px;
+        /* Style both input fields */
+        #pokemonNameInput,
+        #setNameInput {
+            padding: 12px 15px; /* Adjusted padding */
             border: 2px solid #ddd;
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            border-radius: var(--border-radius); /* Rounded corners */
             font-size: 1rem;
             transition: border-color 0.3s ease;
             outline: none;
+            width: 240px; /* Give inputs a defined width */
         }
-        #searchInput:focus {
+        #pokemonNameInput:focus,
+        #setNameInput:focus {
             border-color: var(--pokemon-blue);
         }
 
         #searchButton {
-            padding: 14px 25px;
+            padding: 12px 25px; /* Match input padding vertically */
             background-color: var(--pokemon-blue);
             color: white;
             border: none;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            border-radius: var(--border-radius); /* Rounded corners */
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
             transition: background-color 0.3s ease;
             white-space: nowrap;
+            height: 47px; /* Align height with inputs roughly (border+padding+fontsize) */
+            align-self: flex-end; /* Ensure button aligns correctly */
         }
         #searchButton:hover {
             background-color: var(--pokemon-yellow);
             color: var(--dark-charcoal);
         }
+        /* --- End Updated Search Controls Styling --- */
 
         /* --- Loader Styling (Position Fixed) --- */
         #loader {
-            display: none; /* Hidden by default */
-            position: fixed; /* Position relative to the viewport */
+            display: none;
+            position: fixed;
             top: 50%;
             left: 50%;
-            /* Use translate to ensure true center regardless of element size */
             transform: translate(-50%, -50%);
             width: 60px;
             height: 60px;
@@ -146,7 +155,6 @@
             background: linear-gradient(to bottom, var(--pokemon-red) 0%, var(--pokemon-red) 48%, var(--dark-charcoal) 48%, var(--dark-charcoal) 52%, var(--white) 52%, var(--white) 100%);
             animation: spin 1s linear infinite;
             box-shadow: inset 0 0 0 4px var(--dark-charcoal), 0 0 10px rgba(0,0,0,0.2);
-            /* High z-index to be on top of everything except maybe modal */
             z-index: 1001;
         }
         #loader::before {
@@ -154,7 +162,7 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* Center the inner circle */
+            transform: translate(-50%, -50%);
             width: 18px;
             height: 18px;
             background-color: var(--white);
@@ -163,7 +171,6 @@
             z-index: 1;
         }
         @keyframes spin {
-             /* Keep translate in keyframes if it's part of the base style */
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
@@ -177,8 +184,8 @@
             flex-wrap: wrap;
             gap: 25px;
             justify-content: center;
-            min-height: 150px; /* Can reduce min-height now loader isn't inside */
-            position: relative; /* Keep relative for potential future absolute elements inside */
+            min-height: 150px;
+            position: relative;
         }
 
         /* Card styling */
@@ -276,13 +283,35 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
         /* Responsive Media Queries */
+        @media (max-width: 650px) { /* Adjusted breakpoint for better wrapping */
+            #search-controls {
+                flex-direction: column; /* Stack vertically on small screens */
+                align-items: center; /* Center items when stacked */
+                gap: 15px;
+            }
+            #pokemonNameInput,
+            #setNameInput {
+                 width: 90%; /* Take more width */
+                 max-width: 400px; /* Limit max width */
+                 text-align: center;
+            }
+             #searchButton {
+                 width: 90%; /* Take more width */
+                 max-width: 400px;
+            }
+            .search-field-group {
+                 width: 100%;
+                 align-items: center; /* Center label/input group */
+            }
+             #search-controls label {
+                 text-align: center;
+                 margin-left: 0;
+             }
+        }
         @media (max-width: 600px) {
             body { padding: 10px; }
             #container { padding: 20px; margin: 15px 0; min-height: calc(100vh - 30px); }
             h1 { font-size: 1.6rem; text-shadow: 1px 1px var(--pokemon-yellow); }
-            .input-group { flex-direction: column; max-width: 90%; gap: 10px; }
-            #searchInput { border-radius: var(--border-radius); text-align: center; }
-            #searchButton { border-radius: var(--border-radius); width: 100%; }
             #results { gap: 15px; }
             .card-container { width: calc(50% - 10px); }
             #modal-content { max-width: 300px; }
@@ -290,7 +319,6 @@
             .pagination-button { padding: 6px 12px; font-size: 0.8rem; }
             #page-info { font-size: 0.9rem; }
             .card-image { max-height: 280px; }
-            /* Loader is fixed positioned, no specific mobile adjustments needed unless size change */
         }
         @media (max-width: 400px) {
             .card-container { width: calc(100% - 10px); }
@@ -305,20 +333,26 @@
         <main>
             <h1>Pokémon TCG Dex</h1>
 
+             <!-- === Updated Search Controls HTML === -->
             <div id="search-controls">
-                <label for="searchInput">Enter Pokémon or Set Name:</label>
-                <div class="input-group">
-                    <input type="text" id="searchInput" placeholder="e.g., Pikachu, Base Set, Evolving Skies">
-                    <button id="searchButton">Search</button>
+                <div class="search-field-group">
+                    <label for="pokemonNameInput">Pokémon Name:</label>
+                    <input type="text" id="pokemonNameInput" placeholder="e.g., Pikachu, Eevee">
                 </div>
+                <div class="search-field-group">
+                    <label for="setNameInput">Set Name:</label>
+                    <input type="text" id="setNameInput" placeholder="e.g., Base Set, 151">
+                </div>
+                <button id="searchButton">Search</button>
             </div>
+            <!-- === End Updated Search Controls HTML === -->
 
-            <!-- Loader moved outside results, directly within main -->
+            <!-- Loader outside results, directly within main -->
             <div id="loader"></div>
 
             <div id="results">
                  <!-- Initial message will be replaced by JS -->
-                 <p class="message">Enter a Pokémon name or Set name to find TCG cards!</p>
+                 <p class="message">Enter a Pokémon name and/or Set name to find TCG cards!</p>
             </div>
 
              <div id="pagination-controls"></div>
@@ -337,10 +371,12 @@
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
+        // --- Updated Element References ---
+        const pokemonNameInput = document.getElementById('pokemonNameInput');
+        const setNameInput = document.getElementById('setNameInput');
         const searchButton = document.getElementById('searchButton');
         const resultsDiv = document.getElementById('results');
-        const loader = document.getElementById('loader'); // Reference still works
+        const loader = document.getElementById('loader');
         const modal = document.getElementById('modal');
         const modalImage = document.getElementById('modal-image');
         const closeModalSpan = document.getElementById('close-modal');
@@ -350,24 +386,29 @@
 
         let currentPage = 1;
         let totalPages = 1;
-        let currentSearchTerm = '';
+        // --- Store both search terms for pagination ---
+        let currentPokemonName = '';
+        let currentSetName = '';
         const pageSize = 60;
 
         function showInitialMessage() {
-            resultsDiv.innerHTML = '<p class="message">Enter a Pokémon name or Set name to find TCG cards!</p>';
-            loader.style.display = 'none'; // Ensure loader is hidden initially
+            resultsDiv.innerHTML = '<p class="message">Enter a Pokémon name and/or Set name to find TCG cards!</p>';
+            loader.style.display = 'none';
             clearPagination();
         }
 
         document.addEventListener('DOMContentLoaded', showInitialMessage);
 
-        async function fetchCards(searchTerm, page = 1) {
-            currentSearchTerm = searchTerm.trim();
+        // --- Updated fetchCards function signature ---
+        async function fetchCards(pokemonName, setName, page = 1) {
+            // Store current search terms for pagination
+            currentPokemonName = pokemonName.trim();
+            currentSetName = setName.trim();
             currentPage = page;
 
-            if (!currentSearchTerm) {
-                // Display error message IN the results div
-                resultsDiv.innerHTML = '<p class="message error">Please enter a Pokémon or Set name.</p>';
+            // --- Validation: Check if at least one field is filled ---
+            if (!currentPokemonName && !currentSetName) {
+                resultsDiv.innerHTML = '<p class="message error">Please enter a Pokémon Name or Set Name.</p>';
                 clearPagination();
                 loader.style.display = 'none';
                 return;
@@ -379,69 +420,75 @@
             currentAbortController = new AbortController();
             const signal = currentAbortController.signal;
 
-            // Clear ONLY the results div content, keep loader element separate
-            resultsDiv.innerHTML = '';
+            resultsDiv.innerHTML = ''; // Clear results area
             clearPagination();
-            loader.style.display = 'block'; // Show the loader
+            loader.style.display = 'block'; // Show loader
 
-            const escapedTerm = currentSearchTerm.replace(/"/g, '\\"');
-            const query = `(name:"${escapedTerm}*" OR set.name:"${escapedTerm}*")`;
+            // --- Build API Query Dynamically ---
+            let queryParts = [];
+            if (currentPokemonName) {
+                const escapedName = currentPokemonName.replace(/"/g, '\\"');
+                queryParts.push(`name:"${escapedName}*"`);
+            }
+            if (currentSetName) {
+                const escapedSetName = currentSetName.replace(/"/g, '\\"');
+                queryParts.push(`set.name:"${escapedSetName}*"`);
+            }
+            const query = queryParts.join(' '); // Space implies AND
             const apiUrl = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(query)}&orderBy=set.releaseDate,name&page=${page}&pageSize=${pageSize}`;
+            // --- End Query Building ---
 
             try {
                 const response = await fetch(apiUrl, { signal });
 
-                // It's better to hide the loader AFTER processing starts or fails
-                // loader.style.display = 'none'; // Moved down
-
                 if (!response.ok) {
+                    loader.style.display = 'none';
                     let errorMsg = `API error (${response.status})`;
                     try {
                         const errorData = await response.json();
                         errorMsg += (errorData?.error?.message) ? `: ${errorData.error.message}` : `. ${response.statusText}`;
-                    } catch (e) {
-                        errorMsg += `. ${response.statusText}`;
-                    }
-                    throw new Error(errorMsg); // Throw to be caught by catch block
+                    } catch (e) { errorMsg += `. ${response.statusText}`; }
+                    throw new Error(errorMsg);
                 }
 
                 const data = await response.json();
-                loader.style.display = 'none'; // Hide loader on success
+                loader.style.display = 'none';
 
                 if (!data.data || data.data.length === 0) {
-                     resultsDiv.innerHTML = `<p class="message">No cards found matching "${currentSearchTerm}". Gotta search 'em all!</p>`;
-                     totalPages = 1;
-                 } else {
-                     totalPages = Math.ceil(data.totalCount / data.pageSize);
-                     // resultsDiv should already be clear here
-                     displayCards(data.data);
-                 }
+                    let message = "No cards found";
+                    if (currentPokemonName && currentSetName) {
+                        message += ` matching "${currentPokemonName}" in set "${currentSetName}"`;
+                    } else if (currentPokemonName) {
+                        message += ` matching "${currentPokemonName}"`;
+                    } else if (currentSetName) {
+                        message += ` in set "${currentSetName}"`;
+                    }
+                    message += ". Try a different search!";
+                    resultsDiv.innerHTML = `<p class="message">${message}</p>`;
+                    totalPages = 1;
+                } else {
+                    totalPages = Math.ceil(data.totalCount / data.pageSize);
+                    displayCards(data.data);
+                }
 
                 renderPaginationControls();
 
                 if (page > 1) {
-                    // Scroll results into view (optional, could scroll to top of container)
                     const container = document.getElementById('container');
-                    if(container) {
-                         // Scroll to top of container might feel better than just results
-                         container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    if(container) container.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
 
             } catch (error) {
-                loader.style.display = 'none'; // Ensure loader hidden on any error
-                clearPagination(); // Clear pagination on error
+                loader.style.display = 'none';
+                clearPagination();
                 if (error.name === 'AbortError') {
                     console.log('Fetch aborted');
-                    // Restore initial message if search was cancelled
-                     showInitialMessage();
+                    showInitialMessage();
                 } else {
                     console.error("Error fetching cards:", error);
-                    // Display error message IN the results div
                     resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please check the term or API status.</p>`;
                 }
             } finally {
-                // Final check just in case
                 if (loader.style.display === 'block') {
                    loader.style.display = 'none';
                 }
@@ -449,13 +496,9 @@
             }
         }
 
+        // --- displayCards function (no changes needed) ---
         function displayCards(cards) {
-             // No longer need to clear resultsDiv here, fetchCards handles it
-             // resultsDiv.innerHTML = '';
-
-            if (!cards || cards.length === 0) {
-                return;
-            }
+            if (!cards || cards.length === 0) return;
 
             cards.forEach(card => {
                 if (card.images?.small && card.name && card.set?.name) {
@@ -476,9 +519,9 @@
                     let marketLinkHTML = '';
                     if (card.tcgplayer && card.tcgplayer.url) {
                         const tcgPlayerUrl = card.tcgplayer.url;
-                        const affiliateUrl = tcgPlayerUrl;
+                        const affiliateUrl = tcgPlayerUrl; // Use direct link
 
-                         marketLinkHTML = `
+                        marketLinkHTML = `
                             <a href="${affiliateUrl}" class="market-link" target="_blank" rel="noopener noreferrer" title="View ${card.name} from ${card.set.name} on TCGplayer">
                                View on TCGplayer
                             </a>
@@ -493,16 +536,16 @@
 
                     cardContainer.appendChild(img);
                     cardContainer.appendChild(infoDiv);
-                    resultsDiv.appendChild(cardContainer); // Append card to results
+                    resultsDiv.appendChild(cardContainer);
                 } else {
                     console.warn("Skipping card due to missing data:", card.id, card.name, card.set?.name, card.images?.small);
                 }
             });
         }
 
-         function renderPaginationControls() {
+        // --- Updated renderPaginationControls function ---
+        function renderPaginationControls() {
             paginationControlsDiv.innerHTML = '';
-
             if (totalPages <= 1) return;
 
             const prevButton = document.createElement('button');
@@ -512,7 +555,7 @@
             prevButton.setAttribute('aria-label', 'Go to previous page');
             prevButton.addEventListener('click', () => {
                 if (currentPage > 1) {
-                    fetchCards(currentSearchTerm, currentPage - 1);
+                    fetchCards(currentPokemonName, currentSetName, currentPage - 1); // Use stored terms
                 }
             });
 
@@ -527,7 +570,7 @@
             nextButton.setAttribute('aria-label', 'Go to next page');
             nextButton.addEventListener('click', () => {
                 if (currentPage < totalPages) {
-                    fetchCards(currentSearchTerm, currentPage + 1);
+                    fetchCards(currentPokemonName, currentSetName, currentPage + 1); // Use stored terms
                 }
             });
 
@@ -540,7 +583,7 @@
             paginationControlsDiv.innerHTML = '';
         }
 
-        // --- Modal Functions (Unchanged) ---
+        // --- Modal Functions ---
         function openModal(imageUrl) {
             if (imageUrl) {
                 modalImage.src = imageUrl;
@@ -554,31 +597,30 @@
              document.body.style.overflow = '';
         }
 
-        // --- Event Listeners (Unchanged) ---
+        // --- Event Listeners ---
         searchButton.addEventListener('click', () => {
-            fetchCards(searchInput.value, 1);
+            const nameTerm = pokemonNameInput.value;
+            const setTerm = setNameInput.value;
+            fetchCards(nameTerm, setTerm, 1);
         });
 
-        searchInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
+        pokemonNameInput.addEventListener('keypress', handleEnterKey);
+        setNameInput.addEventListener('keypress', handleEnterKey);
+
+        function handleEnterKey(event) {
+           if (event.key === 'Enter') {
                 event.preventDefault();
-                fetchCards(searchInput.value, 1);
+                const nameTerm = pokemonNameInput.value;
+                const setTerm = setNameInput.value;
+                fetchCards(nameTerm, setTerm, 1);
             }
-        });
+        }
 
         closeModalSpan.addEventListener('click', closeModal);
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && modal.style.display === 'block') {
-                closeModal();
-            }
-        });
+        modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+        window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.style.display === 'block') closeModal(); });
 
-        // --- Footer Credits Function (Unchanged) ---
+        // --- Footer Credits Function ---
         function addFooterCredits() {
             if(footerElement) {
                 const currentYear = new Date().getFullYear();
