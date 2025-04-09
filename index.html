@@ -24,9 +24,8 @@
             --white: #ffffff;
             --border-radius: 8px;
             --card-width: 245px;
-            /* --- Updated Market Link Colors (TCGplayer-esque) --- */
-            --market-color: #ffba00; /* TCGplayer Orange/Yellow */
-            --market-color-hover: #e6a800; /* Darker version for hover */
+            --market-color: #ffba00;
+            --market-color-hover: #e6a800;
         }
 
         *, *::before, *::after {
@@ -70,6 +69,7 @@
 
         main {
            flex-grow: 1;
+           position: relative; /* Needed for absolute positioning of children if we didn't use fixed */
         }
 
         h1 {
@@ -131,6 +131,44 @@
             color: var(--dark-charcoal);
         }
 
+        /* --- Loader Styling (Position Fixed) --- */
+        #loader {
+            display: none; /* Hidden by default */
+            position: fixed; /* Position relative to the viewport */
+            top: 50%;
+            left: 50%;
+            /* Use translate to ensure true center regardless of element size */
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid var(--dark-charcoal);
+            background: linear-gradient(to bottom, var(--pokemon-red) 0%, var(--pokemon-red) 48%, var(--dark-charcoal) 48%, var(--dark-charcoal) 52%, var(--white) 52%, var(--white) 100%);
+            animation: spin 1s linear infinite;
+            box-shadow: inset 0 0 0 4px var(--dark-charcoal), 0 0 10px rgba(0,0,0,0.2);
+            /* High z-index to be on top of everything except maybe modal */
+            z-index: 1001;
+        }
+        #loader::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the inner circle */
+            width: 18px;
+            height: 18px;
+            background-color: var(--white);
+            border: 4px solid var(--dark-charcoal);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        @keyframes spin {
+             /* Keep translate in keyframes if it's part of the base style */
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        /* --- End Loader Styling --- */
+
         #results {
             margin-top: 30px;
             padding-top: 30px;
@@ -139,26 +177,9 @@
             flex-wrap: wrap;
             gap: 25px;
             justify-content: center;
-            min-height: 150px;
-            position: relative;
+            min-height: 150px; /* Can reduce min-height now loader isn't inside */
+            position: relative; /* Keep relative for potential future absolute elements inside */
         }
-         #loader {
-            display: none;
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 4px solid var(--dark-charcoal);
-            background: linear-gradient(to bottom, var(--pokemon-red) 0%, var(--pokemon-red) 48%, var(--dark-charcoal) 48%, var(--dark-charcoal) 52%, var(--white) 52%, var(--white) 100%);
-            animation: spin 1s linear infinite;
-            box-shadow: inset 0 0 0 4px var(--dark-charcoal), 0 0 10px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-        #loader::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; background-color: var(--white); border: 4px solid var(--dark-charcoal); border-radius: 50%; z-index: 1; }
-        @keyframes spin { 0% { transform: translateX(-50%) rotate(0deg); } 100% { transform: translateX(-50%) rotate(360deg); } }
 
         /* Card styling */
         .card-container {
@@ -204,7 +225,7 @@
             margin-bottom: 8px;
         }
 
-        /* --- Styling for the Market Link Button (TCGplayer) --- */
+        /* Market Link Button Styling */
         .market-link {
             display: inline-block;
             margin-top: 5px;
@@ -227,24 +248,26 @@
         .market-link:active {
              transform: translateY(0px);
         }
-        /* --- End Market Link Styling --- */
 
-
+        /* Message Styling */
         .message { width: 100%; text-align: center; font-size: 1.1rem; color: var(--medium-grey); padding: 30px 15px; font-style: italic; }
         .error { color: var(--pokemon-red); font-weight: bold; font-style: normal; background-color: #ffebeb; border: 1px solid var(--pokemon-red); border-radius: var(--border-radius); }
 
+        /* Pagination Styling */
         #pagination-controls { display: flex; justify-content: center; align-items: center; padding: 25px 0 10px 0; margin-top: 20px; gap: 15px; width: 100%; }
         .pagination-button { padding: 8px 16px; background-color: var(--pokemon-blue); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: background-color 0.3s ease, opacity 0.3s ease; }
         .pagination-button:hover:not(:disabled) { background-color: var(--pokemon-yellow); color: var(--dark-charcoal); }
         .pagination-button:disabled { background-color: #ccc; cursor: not-allowed; opacity: 0.6; }
         #page-info { font-size: 1rem; color: var(--medium-grey); font-weight: bold; }
 
+        /* Modal Styling */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); cursor: pointer; padding-top: 50px; }
         #modal-content { margin: auto; display: block; width: 80%; max-width: 350px; cursor: default; }
         #modal-image { width: 100%; height: auto; border-radius: 15px; }
         #close-modal { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; user-select: none; }
         #close-modal:hover, #close-modal:focus { color: var(--pokemon-yellow); text-decoration: none; }
 
+        /* Footer Styling */
         .page-footer { width: 100%; text-align: center; margin-top: auto; padding-top: 20px; border-top: 1px solid #eee; font-size: 0.9rem; color: var(--medium-grey); }
         .page-footer a { color: var(--pokemon-blue); text-decoration: none; transition: color 0.2s ease; }
         .page-footer a:hover { color: var(--pokemon-red); }
@@ -252,8 +275,27 @@
         .page-footer .creator-name { font-weight: bold; color: var(--dark-charcoal); }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-        @media (max-width: 600px) { body { padding: 10px; } #container { padding: 20px; margin: 15px 0; min-height: calc(100vh - 30px); } h1 { font-size: 1.6rem; text-shadow: 1px 1px var(--pokemon-yellow); } .input-group { flex-direction: column; max-width: 90%; gap: 10px; } #searchInput { border-radius: var(--border-radius); text-align: center; } #searchButton { border-radius: var(--border-radius); width: 100%; } #results { gap: 15px; } .card-container { width: calc(50% - 10px); } #modal-content { max-width: 300px; } #pagination-controls { gap: 10px; } .pagination-button { padding: 6px 12px; font-size: 0.8rem; } #page-info { font-size: 0.9rem; } .card-image { max-height: 280px; } }
-        @media (max-width: 400px) { .card-container { width: calc(100% - 10px); } .card-image { max-height: 400px; } }
+        /* Responsive Media Queries */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            #container { padding: 20px; margin: 15px 0; min-height: calc(100vh - 30px); }
+            h1 { font-size: 1.6rem; text-shadow: 1px 1px var(--pokemon-yellow); }
+            .input-group { flex-direction: column; max-width: 90%; gap: 10px; }
+            #searchInput { border-radius: var(--border-radius); text-align: center; }
+            #searchButton { border-radius: var(--border-radius); width: 100%; }
+            #results { gap: 15px; }
+            .card-container { width: calc(50% - 10px); }
+            #modal-content { max-width: 300px; }
+            #pagination-controls { gap: 10px; }
+            .pagination-button { padding: 6px 12px; font-size: 0.8rem; }
+            #page-info { font-size: 0.9rem; }
+            .card-image { max-height: 280px; }
+            /* Loader is fixed positioned, no specific mobile adjustments needed unless size change */
+        }
+        @media (max-width: 400px) {
+            .card-container { width: calc(100% - 10px); }
+            .card-image { max-height: 400px; }
+        }
 
     </style>
 </head>
@@ -271,9 +313,11 @@
                 </div>
             </div>
 
+            <!-- Loader moved outside results, directly within main -->
             <div id="loader"></div>
 
             <div id="results">
+                 <!-- Initial message will be replaced by JS -->
                  <p class="message">Enter a Pokémon name or Set name to find TCG cards!</p>
             </div>
 
@@ -281,10 +325,10 @@
 
         </main>
 
-
         <footer class="page-footer" id="page-footer"></footer>
     </div>
 
+    <!-- Modal remains outside main container -->
     <div id="modal">
       <span id="close-modal" title="Close">×</span>
       <div id="modal-content">
@@ -296,7 +340,7 @@
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const resultsDiv = document.getElementById('results');
-        const loader = document.getElementById('loader');
+        const loader = document.getElementById('loader'); // Reference still works
         const modal = document.getElementById('modal');
         const modalImage = document.getElementById('modal-image');
         const closeModalSpan = document.getElementById('close-modal');
@@ -309,13 +353,23 @@
         let currentSearchTerm = '';
         const pageSize = 60;
 
+        function showInitialMessage() {
+            resultsDiv.innerHTML = '<p class="message">Enter a Pokémon name or Set name to find TCG cards!</p>';
+            loader.style.display = 'none'; // Ensure loader is hidden initially
+            clearPagination();
+        }
+
+        document.addEventListener('DOMContentLoaded', showInitialMessage);
+
         async function fetchCards(searchTerm, page = 1) {
             currentSearchTerm = searchTerm.trim();
             currentPage = page;
 
             if (!currentSearchTerm) {
+                // Display error message IN the results div
                 resultsDiv.innerHTML = '<p class="message error">Please enter a Pokémon or Set name.</p>';
                 clearPagination();
+                loader.style.display = 'none';
                 return;
             }
 
@@ -325,11 +379,10 @@
             currentAbortController = new AbortController();
             const signal = currentAbortController.signal;
 
-            if (page === 1) {
-                resultsDiv.innerHTML = '';
-            }
-            loader.style.display = 'block';
+            // Clear ONLY the results div content, keep loader element separate
+            resultsDiv.innerHTML = '';
             clearPagination();
+            loader.style.display = 'block'; // Show the loader
 
             const escapedTerm = currentSearchTerm.replace(/"/g, '\\"');
             const query = `(name:"${escapedTerm}*" OR set.name:"${escapedTerm}*")`;
@@ -337,7 +390,9 @@
 
             try {
                 const response = await fetch(apiUrl, { signal });
-                loader.style.display = 'none';
+
+                // It's better to hide the loader AFTER processing starts or fails
+                // loader.style.display = 'none'; // Moved down
 
                 if (!response.ok) {
                     let errorMsg = `API error (${response.status})`;
@@ -347,41 +402,46 @@
                     } catch (e) {
                         errorMsg += `. ${response.statusText}`;
                     }
-                    throw new Error(errorMsg);
+                    throw new Error(errorMsg); // Throw to be caught by catch block
                 }
 
                 const data = await response.json();
+                loader.style.display = 'none'; // Hide loader on success
 
                 if (!data.data || data.data.length === 0) {
-                     if (page === 1) {
-                         resultsDiv.innerHTML = `<p class="message">No cards found matching "${currentSearchTerm}". Gotta search 'em all!</p>`;
-                     } else {
-                         resultsDiv.innerHTML += `<p class="message">No more cards found.</p>`;
-                     }
-                     totalPages = page > 1 ? page -1 : 1;
+                     resultsDiv.innerHTML = `<p class="message">No cards found matching "${currentSearchTerm}". Gotta search 'em all!</p>`;
+                     totalPages = 1;
                  } else {
                      totalPages = Math.ceil(data.totalCount / data.pageSize);
+                     // resultsDiv should already be clear here
                      displayCards(data.data);
                  }
 
                 renderPaginationControls();
 
                 if (page > 1) {
-                    const firstCard = resultsDiv.querySelector('.card-container');
-                    const targetElement = firstCard || resultsDiv;
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Scroll results into view (optional, could scroll to top of container)
+                    const container = document.getElementById('container');
+                    if(container) {
+                         // Scroll to top of container might feel better than just results
+                         container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }
 
             } catch (error) {
-                loader.style.display = 'none';
-                clearPagination();
+                loader.style.display = 'none'; // Ensure loader hidden on any error
+                clearPagination(); // Clear pagination on error
                 if (error.name === 'AbortError') {
                     console.log('Fetch aborted');
+                    // Restore initial message if search was cancelled
+                     showInitialMessage();
                 } else {
                     console.error("Error fetching cards:", error);
+                    // Display error message IN the results div
                     resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please check the term or API status.</p>`;
                 }
             } finally {
+                // Final check just in case
                 if (loader.style.display === 'block') {
                    loader.style.display = 'none';
                 }
@@ -390,9 +450,8 @@
         }
 
         function displayCards(cards) {
-             if (currentPage === 1) {
-                 resultsDiv.innerHTML = '';
-             }
+             // No longer need to clear resultsDiv here, fetchCards handles it
+             // resultsDiv.innerHTML = '';
 
             if (!cards || cards.length === 0) {
                 return;
@@ -434,7 +493,7 @@
 
                     cardContainer.appendChild(img);
                     cardContainer.appendChild(infoDiv);
-                    resultsDiv.appendChild(cardContainer);
+                    resultsDiv.appendChild(cardContainer); // Append card to results
                 } else {
                     console.warn("Skipping card due to missing data:", card.id, card.name, card.set?.name, card.images?.small);
                 }
@@ -481,6 +540,7 @@
             paginationControlsDiv.innerHTML = '';
         }
 
+        // --- Modal Functions (Unchanged) ---
         function openModal(imageUrl) {
             if (imageUrl) {
                 modalImage.src = imageUrl;
@@ -494,6 +554,7 @@
              document.body.style.overflow = '';
         }
 
+        // --- Event Listeners (Unchanged) ---
         searchButton.addEventListener('click', () => {
             fetchCards(searchInput.value, 1);
         });
@@ -517,6 +578,7 @@
             }
         });
 
+        // --- Footer Credits Function (Unchanged) ---
         function addFooterCredits() {
             if(footerElement) {
                 const currentYear = new Date().getFullYear();
