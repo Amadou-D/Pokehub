@@ -165,7 +165,24 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             z-index: 101; /* Below input/button, above other content */
             margin-top: -2px; /* Overlap input border */
+            /* Improve scrollbar appearance */
+             scrollbar-width: thin;
+             scrollbar-color: var(--medium-grey) var(--light-grey);
         }
+         /* Webkit Scrollbar */
+         .suggestions-container::-webkit-scrollbar {
+             width: 8px;
+         }
+         .suggestions-container::-webkit-scrollbar-track {
+             background: var(--light-grey);
+             border-radius: 0 0 var(--border-radius) 0;
+         }
+         .suggestions-container::-webkit-scrollbar-thumb {
+             background-color: var(--medium-grey);
+             border-radius: 4px;
+             border: 2px solid var(--light-grey);
+         }
+
 
         .suggestion-item {
             padding: 8px 12px; /* Slightly smaller padding */
@@ -390,22 +407,21 @@
             }
              /* Suggestions positioning on mobile */
              .suggestions-container {
-                 /* Change from absolute to relative/static for stacking */
-                 position: relative; /* Let it stack naturally */
+                 position: relative;
                  top: auto;
                  left: auto;
                  right: auto;
                  width: 100%;
-                 margin-top: 2px; /* Space below input */
+                 margin-top: 2px;
                  border-radius: var(--border-radius);
-                 border: 1px solid #ddd; /* Add back top border */
-                 max-height: 150px; /* Reduce max height on mobile */
+                 border: 1px solid #ddd;
+                 max-height: 150px;
             }
 
              #searchButton {
                  width: 90%;
                  max-width: 400px;
-                 margin-top: 5px; /* Adjust margin when stacked */
+                 margin-top: 5px;
             }
              #search-controls label {
                  text-align: center;
@@ -501,32 +517,137 @@
         const pageSize = 60;
 
         // --- Autocomplete Data ---
-        const pokemonNames = [ // Subset - Add more!
-          "Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard",
-          "Squirtle", "Wartortle", "Blastoise", "Caterpie", "Metapod", "Butterfree",
-          "Weedle", "Kakuna", "Beedrill", "Pidgey", "Pidgeotto", "Pidgeot", "Rattata",
-          "Raticate", "Spearow", "Fearow", "Ekans", "Arbok", "Pikachu", "Raichu",
-          "Sandshrew", "Sandslash", "Nidoran♀", "Nidorina", "Nidoqueen", "Nidoran♂",
-          "Nidorino", "Nidoking", "Clefairy", "Clefable", "Vulpix", "Ninetales",
-          "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom", "Vileplume",
-          "Paras", "Parasect", "Venonat", "Venomoth", "Diglett", "Dugtrio", "Meowth",
-          "Persian", "Psyduck", "Golduck", "Mankey", "Primeape", "Growlithe", "Arcanine",
-          "Poliwag", "Poliwhirl", "Poliwrath", "Abra", "Kadabra", "Alakazam", "Machop",
-          "Machoke", "Machamp", "Bellsprout", "Weepinbell", "Victreebel", "Tentacool",
-          "Tentacruel", "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke",
-          "Slowbro", "Magnemite", "Magneton", "Farfetch'd", "Doduo", "Dodrio", "Seel",
-          "Dewgong", "Grimer", "Muk", "Shellder", "Cloyster", "Gastly", "Haunter", "Gengar",
-          "Onix", "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb", "Electrode",
-          "Exeggcute", "Exeggutor", "Cubone", "Marowak", "Hitmonlee", "Hitmonchan",
-          "Lickitung", "Koffing", "Weezing", "Rhyhorn", "Rhydon", "Chansey", "Tangela",
-          "Kangaskhan", "Horsea", "Seadra", "Goldeen", "Seaking", "Staryu", "Starmie",
-          "Mr. Mime", "Scyther", "Jynx", "Electabuzz", "Magmar", "Pinsir", "Tauros",
-          "Magikarp", "Gyarados", "Lapras", "Ditto", "Eevee", "Vaporeon", "Jolteon",
-          "Flareon", "Porygon", "Omanyte", "Omastar", "Kabuto", "Kabutops", "Aerodactyl",
-          "Snorlax", "Articuno", "Zapdos", "Moltres", "Dratini", "Dragonair", "Dragonite",
-          "Mewtwo", "Mew",
-          // Add more...
+        // ***** THIS IS THE UPDATED, MUCH LONGER LIST *****
+        const pokemonNames = [
+            // Gen 1
+            "Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle", "Blastoise",
+            "Caterpie", "Metapod", "Butterfree", "Weedle", "Kakuna", "Beedrill", "Pidgey", "Pidgeotto", "Pidgeot",
+            "Rattata", "Raticate", "Spearow", "Fearow", "Ekans", "Arbok", "Pikachu", "Raichu", "Sandshrew", "Sandslash",
+            "Nidoran♀", "Nidorina", "Nidoqueen", "Nidoran♂", "Nidorino", "Nidoking", "Clefairy", "Clefable", "Vulpix",
+            "Ninetales", "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom", "Vileplume", "Paras",
+            "Parasect", "Venonat", "Venomoth", "Diglett", "Dugtrio", "Meowth", "Persian", "Psyduck", "Golduck",
+            "Mankey", "Primeape", "Growlithe", "Arcanine", "Poliwag", "Poliwhirl", "Poliwrath", "Abra", "Kadabra",
+            "Alakazam", "Machop", "Machoke", "Machamp", "Bellsprout", "Weepinbell", "Victreebel", "Tentacool",
+            "Tentacruel", "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke", "Slowbro", "Magnemite",
+            "Magneton", "Farfetch'd", "Doduo", "Dodrio", "Seel", "Dewgong", "Grimer", "Muk", "Shellder", "Cloyster",
+            "Gastly", "Haunter", "Gengar", "Onix", "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb", "Electrode",
+            "Exeggcute", "Exeggutor", "Cubone", "Marowak", "Hitmonlee", "Hitmonchan", "Lickitung", "Koffing",
+            "Weezing", "Rhyhorn", "Rhydon", "Chansey", "Tangela", "Kangaskhan", "Horsea", "Seadra", "Goldeen",
+            "Seaking", "Staryu", "Starmie", "Mr. Mime", "Scyther", "Jynx", "Electabuzz", "Magmar", "Pinsir", "Tauros",
+            "Magikarp", "Gyarados", "Lapras", "Ditto", "Eevee", "Vaporeon", "Jolteon", "Flareon", "Porygon",
+            "Omanyte", "Omastar", "Kabuto", "Kabutops", "Aerodactyl", "Snorlax", "Articuno", "Zapdos", "Moltres",
+            "Dratini", "Dragonair", "Dragonite", "Mewtwo", "Mew",
+            // Gen 2
+            "Chikorita", "Bayleef", "Meganium", "Cyndaquil", "Quilava", "Typhlosion", "Totodile", "Croconaw", "Feraligatr",
+            "Sentret", "Furret", "Hoothoot", "Noctowl", "Ledyba", "Ledian", "Spinarak", "Ariados", "Crobat", "Chinchou",
+            "Lanturn", "Pichu", "Cleffa", "Igglybuff", "Togepi", "Togetic", "Natu", "Xatu", "Mareep", "Flaaffy",
+            "Ampharos", "Bellossom", "Marill", "Azumarill", "Sudowoodo", "Politoed", "Hoppip", "Skiploom", "Jumpluff",
+            "Aipom", "Sunkern", "Sunflora", "Yanma", "Wooper", "Quagsire", "Espeon", "Umbreon", "Murkrow", "Slowking",
+            "Misdreavus", "Unown", "Wobbuffet", "Girafarig", "Pineco", "Forretress", "Dunsparce", "Gligar", "Steelix",
+            "Snubbull", "Granbull", "Qwilfish", "Scizor", "Shuckle", "Heracross", "Sneasel", "Teddiursa", "Ursaring",
+            "Slugma", "Magcargo", "Swinub", "Piloswine", "Corsola", "Remoraid", "Octillery", "Delibird", "Mantine",
+            "Skarmory", "Houndour", "Houndoom", "Kingdra", "Phanpy", "Donphan", "Porygon2", "Stantler", "Smeargle",
+            "Tyrogue", "Hitmontop", "Smoochum", "Elekid", "Magby", "Miltank", "Blissey", "Raikou", "Entei", "Suicune",
+            "Larvitar", "Pupitar", "Tyranitar", "Lugia", "Ho-Oh", "Celebi",
+            // Gen 3
+            "Treecko", "Grovyle", "Sceptile", "Torchic", "Combusken", "Blaziken", "Mudkip", "Marshtomp", "Swampert",
+            "Poochyena", "Mightyena", "Zigzagoon", "Linoone", "Wurmple", "Silcoon", "Beautifly", "Cascoon", "Dustox",
+            "Lotad", "Lombre", "Ludicolo", "Seedot", "Nuzleaf", "Shiftry", "Taillow", "Swellow", "Wingull", "Pelipper",
+            "Ralts", "Kirlia", "Gardevoir", "Surskit", "Masquerain", "Shroomish", "Breloom", "Slakoth", "Vigoroth",
+            "Slaking", "Nincada", "Ninjask", "Shedinja", "Whismur", "Loudred", "Exploud", "Makuhita", "Hariyama",
+            "Azurill", "Nosepass", "Skitty", "Delcatty", "Sableye", "Mawile", "Aron", "Lairon", "Aggron", "Meditite",
+            "Medicham", "Electrike", "Manectric", "Plusle", "Minun", "Volbeat", "Illumise", "Roselia", "Gulpin",
+            "Swalot", "Carvanha", "Sharpedo", "Wailmer", "Wailord", "Numel", "Camerupt", "Torkoal", "Spoink", "Grumpig",
+            "Spinda", "Trapinch", "Vibrava", "Flygon", "Cacnea", "Cacturne", "Swablu", "Altaria", "Zangoose", "Seviper",
+            "Lunatone", "Solrock", "Barboach", "Whiscash", "Corphish", "Crawdaunt", "Baltoy", "Claydol", "Lileep",
+            "Cradily", "Anorith", "Armaldo", "Feebas", "Milotic", "Castform", "Kecleon", "Shuppet", "Banette", "Duskull",
+            "Dusclops", "Tropius", "Chimecho", "Absol", "Wynaut", "Snorunt", "Glalie", "Spheal", "Sealeo", "Walrein",
+            "Clamperl", "Huntail", "Gorebyss", "Relicanth", "Luvdisc", "Bagon", "Shelgon", "Salamence", "Beldum",
+            "Metang", "Metagross", "Regirock", "Regice", "Registeel", "Latias", "Latios", "Kyogre", "Groudon",
+            "Rayquaza", "Jirachi", "Deoxys",
+            // Gen 4
+            "Turtwig", "Grotle", "Torterra", "Chimchar", "Monferno", "Infernape", "Piplup", "Prinplup", "Empoleon",
+            "Starly", "Staravia", "Staraptor", "Bidoof", "Bibarel", "Kricketot", "Kricketune", "Shinx", "Luxio",
+            "Luxray", "Budew", "Roserade", "Cranidos", "Rampardos", "Shieldon", "Bastiodon", "Burmy", "Wormadam",
+            "Mothim", "Combee", "Vespiquen", "Pachirisu", "Buizel", "Floatzel", "Cherubi", "Cherrim", "Shellos",
+            "Gastrodon", "Ambipom", "Drifloon", "Drifblim", "Buneary", "Lopunny", "Mismagius", "Honchkrow", "Glameow",
+            "Purugly", "Chingling", "Stunky", "Skuntank", "Bronzor", "Bronzong", "Bonsly", "Mime Jr.", "Happiny",
+            "Chatot", "Spiritomb", "Gible", "Gabite", "Garchomp", "Munchlax", "Riolu", "Lucario", "Hippopotas",
+            "Hippowdon", "Skorupi", "Drapion", "Croagunk", "Toxicroak", "Carnivine", "Finneon", "Lumineon", "Mantyke",
+            "Snover", "Abomasnow", "Weavile", "Magnezone", "Lickilicky", "Rhyperior", "Tangrowth", "Electivire",
+            "Magmortar", "Togekiss", "Yanmega", "Leafeon", "Glaceon", "Gliscor", "Mamoswine", "Porygon-Z", "Gallade",
+            "Probopass", "Dusknoir", "Froslass", "Rotom", "Uxie", "Mesprit", "Azelf", "Dialga", "Palkia", "Heatran",
+            "Regigigas", "Giratina", "Cresselia", "Phione", "Manaphy", "Darkrai", "Shaymin", "Arceus",
+            // Gen 5
+            "Victini", "Snivy", "Servine", "Serperior", "Tepig", "Pignite", "Emboar", "Oshawott", "Dewott", "Samurott",
+            "Patrat", "Watchog", "Lillipup", "Herdier", "Stoutland", "Purrloin", "Liepard", "Pansage", "Simisage",
+            "Pansear", "Simisear", "Panpour", "Simipour", "Munna", "Musharna", "Pidove", "Tranquill", "Unfezant",
+            "Blitzle", "Zebstrika", "Roggenrola", "Boldore", "Gigalith", "Woobat", "Swoobat", "Drilbur", "Excadrill",
+            "Audino", "Timburr", "Gurdurr", "Conkeldurr", "Tympole", "Palpitoad", "Seismitoad", "Throh", "Sawk",
+            "Sewaddle", "Swadloon", "Leavanny", "Venipede", "Whirlipede", "Scolipede", "Cottonee", "Whimsicott",
+            "Petilil", "Lilligant", "Basculin", "Sandile", "Krokorok", "Krookodile", "Darumaka", "Darmanitan",
+            "Maractus", "Dwebble", "Crustle", "Scraggy", "Scrafty", "Sigilyph", "Yamask", "Cofagrigus", "Tirtouga",
+            "Carracosta", "Archen", "Archeops", "Trubbish", "Garbodor", "Zorua", "Zoroark", "Minccino", "Cinccino",
+            "Gothita", "Gothorita", "Gothitelle", "Solosis", "Duosion", "Reuniclus", "Ducklett", "Swanna", "Vanillite",
+            "Vanillish", "Vanilluxe", "Deerling", "Sawsbuck", "Emolga", "Karrablast", "Escavalier", "Foongus",
+            "Amoonguss", "Frillish", "Jellicent", "Alomomola", "Joltik", "Galvantula", "Ferroseed", "Ferrothorn",
+            "Klink", "Klang", "Klinklang", "Tynamo", "Eelektrik", "Eelektross", "Elgyem", "Beheeyem", "Litwick",
+            "Lampent", "Chandelure", "Axew", "Fraxure", "Haxorus", "Cubchoo", "Beartic", "Cryogonal", "Shelmet",
+            "Accelgor", "Stunfisk", "Mienfoo", "Mienshao", "Druddigon", "Golett", "Golurk", "Pawniard", "Bisharp",
+            "Bouffalant", "Rufflet", "Braviary", "Vullaby", "Mandibuzz", "Heatmor", "Durant", "Deino", "Zweilous",
+            "Hydreigon", "Larvesta", "Volcarona", "Cobalion", "Terrakion", "Virizion", "Tornadus", "Thundurus",
+            "Reshiram", "Zekrom", "Landorus", "Kyurem", "Keldeo", "Meloetta", "Genesect",
+            // Gen 6
+            "Chespin", "Quilladin", "Chesnaught", "Fennekin", "Braixen", "Delphox", "Froakie", "Frogadier", "Greninja",
+            "Bunnelby", "Diggersby", "Fletchling", "Fletchinder", "Talonflame", "Scatterbug", "Spewpa", "Vivillon",
+            "Litleo", "Pyroar", "Flabébé", "Floette", "Florges", "Skiddo", "Gogoat", "Pancham", "Pangoro", "Furfrou",
+            "Espurr", "Meowstic", "Honedge", "Doublade", "Aegislash", "Spritzee", "Aromatisse", "Swirlix", "Slurpuff",
+            "Inkay", "Malamar", "Binacle", "Barbaracle", "Skrelp", "Dragalge", "Clauncher", "Clawitzer", "Helioptile",
+            "Heliolisk", "Tyrunt", "Tyrantrum", "Amaura", "Aurorus", "Sylveon", "Hawlucha", "Dedenne", "Carbink",
+            "Goomy", "Sliggoo", "Goodra", "Klefki", "Phantump", "Trevenant", "Pumpkaboo", "Gourgeist", "Bergmite",
+            "Avalugg", "Noibat", "Noivern", "Xerneas", "Yveltal", "Zygarde", "Diancie", "Hoopa", "Volcanion",
+            // Gen 7
+            "Rowlet", "Dartrix", "Decidueye", "Litten", "Torracat", "Incineroar", "Popplio", "Brionne", "Primarina",
+            "Pikipek", "Trumbeak", "Toucannon", "Yungoos", "Gumshoos", "Grubbin", "Charjabug", "Vikavolt", "Crabrawler",
+            "Crabominable", "Oricorio", "Cutiefly", "Ribombee", "Rockruff", "Lycanroc", "Wishiwashi", "Mareanie",
+            "Toxapex", "Mudbray", "Mudsdale", "Dewpider", "Araquanid", "Fomantis", "Lurantis", "Morelull", "Shiinotic",
+            "Salandit", "Salazzle", "Stufful", "Bewear", "Bounsweet", "Steenee", "Tsareena", "Comfey", "Oranguru",
+            "Passimian", "Wimpod", "Golisopod", "Sandygast", "Palossand", "Pyukumuku", "Type: Null", "Silvally",
+            "Minior", "Komala", "Turtonator", "Togedemaru", "Mimikyu", "Bruxish", "Drampa", "Dhelmise", "Jangmo-o",
+            "Hakamo-o", "Kommo-o", "Tapu Koko", "Tapu Lele", "Tapu Bulu", "Tapu Fini", "Cosmog", "Cosmoem", "Solgaleo",
+            "Lunala", "Nihilego", "Buzzwole", "Pheromosa", "Xurkitree", "Celesteela", "Kartana", "Guzzlord",
+            "Necrozma", "Magearna", "Marshadow", "Poipole", "Naganadel", "Stakataka", "Blacephalon", "Zeraora",
+            "Meltan", "Melmetal",
+            // Gen 8
+            "Grookey", "Thwackey", "Rillaboom", "Scorbunny", "Raboot", "Cinderace", "Sobble", "Drizzile", "Inteleon",
+            "Skwovet", "Greedent", "Rookidee", "Corvisquire", "Corviknight", "Blipbug", "Dottler", "Orbeetle",
+            "Nickit", "Thievul", "Gossifleur", "Eldegoss", "Wooloo", "Dubwool", "Chewtle", "Drednaw", "Yamper",
+            "Boltund", "Rolycoly", "Carkol", "Coalossal", "Applin", "Flapple", "Appletun", "Silicobra", "Sandaconda",
+            "Cramorant", "Arrokuda", "Barraskewda", "Toxel", "Toxtricity", "Sizzlipede", "Centiskorch", "Clobbopus",
+            "Grapploct", "Sinistea", "Polteageist", "Hatenna", "Hattrem", "Hatterene", "Impidimp", "Morgrem",
+            "Grimmsnarl", "Obstagoon", "Perrserker", "Cursola", "Sirfetch'd", "Mr. Rime", "Runerigus", "Milcery",
+            "Alcremie", "Falinks", "Pincurchin", "Snom", "Frosmoth", "Stonjourner", "Eiscue", "Indeedee", "Morpeko",
+            "Cufant", "Copperajah", "Dracozolt", "Arctozolt", "Dracovish", "Arctovish", "Duraludon", "Dreepy",
+            "Drakloak", "Dragapult", "Zacian", "Zamazenta", "Eternatus", "Kubfu", "Urshifu", "Zarude", "Regieleki",
+            "Regidrago", "Glastrier", "Spectrier", "Calyrex", "Wyrdeer", "Kleavor", "Ursaluna", "Basculegion",
+            "Sneasler", "Overqwil", "Enamorus",
+             // Gen 9
+             "Sprigatito", "Floragato", "Meowscarada", "Fuecoco", "Crocalor", "Skeledirge", "Quaxly", "Quaxwell", "Quaquaval",
+             "Lechonk", "Oinkologne", "Tarountula", "Spidops", "Nymble", "Lokix", "Pawmi", "Pawmo", "Pawmot", "Tandemaus",
+             "Maushold", "Fidough", "Dachsbun", "Smoliv", "Dolliv", "Arboliva", "Squawkabilly", "Nacli", "Naclstack",
+             "Garganacl", "Charcadet", "Armarouge", "Ceruledge", "Tadbulb", "Bellibolt", "Wattrel", "Kilowattrel",
+             "Maschiff", "Mabosstiff", "Shroodle", "Grafaiai", "Bramblin", "Brambleghast", "Toedscool", "Toedscruel",
+             "Klawf", "Capsakid", "Scovillain", "Rellor", "Rabsca", "Flittle", "Espathra", "Tinkatink", "Tinkatuff",
+             "Tinkaton", "Wiglett", "Wugtrio", "Bombirdier", "Finizen", "Palafin", "Varoom", "Revavroom", "Cyclizar",
+             "Orthworm", "Glimmet", "Glimmora", "Greavard", "Houndstone", "Flamigo", "Cetoddle", "Cetitan", "Veluza",
+             "Dondozo", "Tatsugiri", "Annihilape", "Clodsire", "Farigiraf", "Dudunsparce", "Kingambit", "Great Tusk",
+             "Scream Tail", "Brute Bonnet", "Flutter Mane", "Slither Wing", "Sandy Shocks", "Iron Treads", "Iron Bundle",
+             "Iron Hands", "Iron Jugulis", "Iron Moth", "Iron Thorns", "Frigibax", "Arctibax", "Baxcalibur", "Gimmighoul",
+             "Gholdengo", "Wo-Chien", "Chien-Pao", "Ting-Lu", "Chi-Yu", "Roaring Moon", "Iron Valiant", "Koraidon",
+             "Miraidon", "Walking Wake", "Iron Leaves", "Pecharunt", "Okidogi", "Munkidori", "Fezandipiti", "Terapagos"
         ].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())); // Pre-sort
+
+        // ***** END OF UPDATED LIST *****
 
         let setNames = []; // To be populated by API
 
@@ -537,55 +658,45 @@
                 const response = await fetch(setsApiUrl);
                 if (!response.ok) throw new Error(`Failed to fetch sets: ${response.status}`);
                 const data = await response.json();
-                // Sort fetched names alphabetically, ignoring case
                 setNames = data.data.map(set => set.name).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
                 console.log(`Loaded ${setNames.length} set names.`);
             } catch (error) {
                 console.error("Error fetching set names:", error);
-                setNames = []; // Ensure it's an empty array on error
+                setNames = [];
             }
         }
 
         // --- Function to Show/Hide Suggestions (Takes target input and container) ---
         function displaySuggestions(inputText, suggestionsList, targetInput, targetContainer) {
-            targetContainer.innerHTML = ''; // Clear previous suggestions
+            targetContainer.innerHTML = '';
             if (inputText.length < 1 || suggestionsList.length === 0) {
                 targetContainer.style.display = 'none';
                 return;
             }
-
-            // Filter suggestions (case-insensitive startsWith)
             const filtered = suggestionsList.filter(suggestion =>
                 suggestion.toLowerCase().startsWith(inputText.toLowerCase())
             );
-
             if (filtered.length === 0) {
                 targetContainer.style.display = 'none';
                 return;
             }
-
-            filtered.slice(0, 8).forEach(suggestion => { // Limit suggestions shown
+            filtered.slice(0, 8).forEach(suggestion => {
                 const item = document.createElement('div');
                 item.classList.add('suggestion-item');
                 item.textContent = suggestion;
                 item.addEventListener('mousedown', (e) => {
                     e.preventDefault();
-                    targetInput.value = suggestion; // Fill the correct input
-                    targetContainer.style.display = 'none'; // Hide the correct container
-                    // Optionally trigger search immediately or just fill the field
-                    // searchButton.click();
+                    targetInput.value = suggestion;
+                    targetContainer.style.display = 'none';
                 });
                 targetContainer.appendChild(item);
             });
-
             targetContainer.style.display = 'block';
         }
 
         // --- Hide Specific Suggestion Container ---
         function hideSuggestions(container) {
-             if (container) {
-                container.style.display = 'none';
-             }
+             if (container) container.style.display = 'none';
         }
         // --- Hide ALL Suggestion Containers ---
         function hideAllSuggestions() {
@@ -593,20 +704,19 @@
              hideSuggestions(setSuggestionsContainer);
         }
 
-
         // --- Initial Setup ---
         document.addEventListener('DOMContentLoaded', () => {
             showInitialMessage();
-            fetchSetNames(); // Fetch set names on load
+            fetchSetNames();
         });
 
         // --- Updated showInitialMessage for Placeholder ---
         function showInitialMessage() {
             resultsDiv.innerHTML = '<p class="message">Enter a Pokémon name and/or Set name to find TCG cards!</p>';
-            resultsDiv.classList.add('results-placeholder'); // Add placeholder class
+            resultsDiv.classList.add('results-placeholder');
             loader.style.display = 'none';
             clearPagination();
-            hideAllSuggestions(); // Ensure suggestions hidden
+            hideAllSuggestions();
         }
 
         // --- Updated fetchCards function ---
@@ -614,59 +724,36 @@
             currentPokemonName = pokemonName.trim();
             currentSetName = setName.trim();
             currentPage = page;
-
-            // Hide suggestions when starting search
             hideAllSuggestions();
-            // Remove placeholder background
             resultsDiv.classList.remove('results-placeholder');
-
             if (!currentPokemonName && !currentSetName) {
                 resultsDiv.innerHTML = '<p class="message error">Please enter a Pokémon Name or Set Name.</p>';
                 clearPagination();
                 loader.style.display = 'none';
                 return;
             }
-
-            if (currentAbortController) {
-                currentAbortController.abort();
-            }
+            if (currentAbortController) currentAbortController.abort();
             currentAbortController = new AbortController();
             const signal = currentAbortController.signal;
-
             resultsDiv.innerHTML = '';
             clearPagination();
             loader.style.display = 'block';
-
             let queryParts = [];
-            if (currentPokemonName) {
-                const escapedName = currentPokemonName.replace(/"/g, '\\"');
-                queryParts.push(`name:"${escapedName}*"`);
-            }
-            if (currentSetName) {
-                const escapedSetName = currentSetName.replace(/"/g, '\\"');
-                queryParts.push(`set.name:"${escapedSetName}*"`);
-            }
+            if (currentPokemonName) queryParts.push(`name:"${currentPokemonName.replace(/"/g, '\\"')}*"`);
+            if (currentSetName) queryParts.push(`set.name:"${currentSetName.replace(/"/g, '\\"')}*"`);
             const query = queryParts.join(' ');
             const apiUrl = `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(query)}&orderBy=set.releaseDate,name&page=${page}&pageSize=${pageSize}`;
-
             try {
                 const response = await fetch(apiUrl, { signal });
-
                 if (!response.ok) {
-                    // Error handling as before
                     let errorMsg = `API error (${response.status})`;
-                    try {
-                        const errorData = await response.json();
-                        errorMsg += (errorData?.error?.message) ? `: ${errorData.error.message}` : `. ${response.statusText}`;
-                    } catch (e) { errorMsg += `. ${response.statusText}`; }
+                    try { errorMsg += `: ${ (await response.json()).error.message }`; }
+                    catch (e) { errorMsg += `. ${response.statusText}`; }
                     throw new Error(errorMsg);
                 }
-
                 const data = await response.json();
                 loader.style.display = 'none';
-
                 if (!data.data || data.data.length === 0) {
-                    // Message formatting as before
                     let message = "No cards found";
                     if (currentPokemonName && currentSetName) message += ` matching "${currentPokemonName}" in set "${currentSetName}"`;
                     else if (currentPokemonName) message += ` matching "${currentPokemonName}"`;
@@ -676,34 +763,18 @@
                     totalPages = 1;
                 } else {
                     totalPages = Math.ceil(data.totalCount / data.pageSize);
-                    displayCards(data.data); // No changes needed here
+                    displayCards(data.data);
                 }
-
-                renderPaginationControls(); // No changes needed here
-
-                if (page > 1) {
-                    const container = document.getElementById('container');
-                    if(container) container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-
+                renderPaginationControls();
+                if (page > 1) document.getElementById('container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (error) {
                 loader.style.display = 'none';
                 clearPagination();
-                // Ensure placeholder class removed on error
                 resultsDiv.classList.remove('results-placeholder');
-
-                if (error.name === 'AbortError') {
-                    console.log('Fetch aborted');
-                    showInitialMessage(); // Restore initial state (with placeholder)
-                } else {
-                    console.error("Error fetching cards:", error);
-                    resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please check the term or API status.</p>`;
-                }
+                if (error.name === 'AbortError') { console.log('Fetch aborted'); showInitialMessage(); }
+                else { console.error("Error fetching cards:", error); resultsDiv.innerHTML = `<p class="message error">Error: ${error.message}. Please check the term or API status.</p>`; }
             } finally {
-                if (loader.style.display === 'block') {
-                   loader.style.display = 'none';
-                }
-                // Ensure placeholder class is definitively removed unless showInitialMessage was called
+                if (loader.style.display === 'block') loader.style.display = 'none';
                  if (!resultsDiv.classList.contains('results-placeholder')) {
                      const initialMsgElement = resultsDiv.querySelector('p.message');
                      if (!initialMsgElement || !initialMsgElement.textContent.startsWith('Enter a Pokémon name')) {
@@ -716,141 +787,53 @@
 
         // --- displayCards function (unchanged) ---
         function displayCards(cards) {
-            resultsDiv.classList.remove('results-placeholder'); // Redundant check
+            resultsDiv.classList.remove('results-placeholder');
             if (!cards || cards.length === 0) return;
-
             cards.forEach(card => {
                 if (card.images?.small && card.name && card.set?.name) {
-                    const cardContainer = document.createElement('div');
-                    cardContainer.classList.add('card-container');
-                    const img = document.createElement('img');
-                    img.src = card.images.small;
-                    img.alt = `Card: ${card.name} - Set: ${card.set.name}`;
-                    img.title = `Click to enlarge\nName: ${card.name}\nSet: ${card.set.name}\nRarity: ${card.rarity || 'N/A'}`;
-                    img.classList.add('card-image');
-                    img.loading = 'lazy';
-                    img.addEventListener('click', () => openModal(card.images.large));
-                    const infoDiv = document.createElement('div');
-                    infoDiv.classList.add('card-info');
-                    let marketLinkHTML = '';
-                    if (card.tcgplayer && card.tcgplayer.url) {
-                        const affiliateUrl = card.tcgplayer.url;
-                        marketLinkHTML = `
-                            <a href="${affiliateUrl}" class="market-link" target="_blank" rel="noopener noreferrer" title="View ${card.name} from ${card.set.name} on TCGplayer">
-                               View on TCGplayer
-                            </a>`;
-                    }
-                    infoDiv.innerHTML = `
-                        <strong>${card.set.name}</strong>
-                        <span>Rarity: ${card.rarity || 'Common'}</span>
-                        ${marketLinkHTML}`;
-                    cardContainer.appendChild(img);
-                    cardContainer.appendChild(infoDiv);
-                    resultsDiv.appendChild(cardContainer);
-                } else {
-                    console.warn("Skipping card due to missing data:", card.id, card.name, card.set?.name, card.images?.small);
-                }
+                    const cardContainer = document.createElement('div'); cardContainer.classList.add('card-container');
+                    const img = document.createElement('img'); img.src = card.images.small; img.alt = `Card: ${card.name} - Set: ${card.set.name}`; img.title = `Click to enlarge\nName: ${card.name}\nSet: ${card.set.name}\nRarity: ${card.rarity || 'N/A'}`; img.classList.add('card-image'); img.loading = 'lazy'; img.addEventListener('click', () => openModal(card.images.large));
+                    const infoDiv = document.createElement('div'); infoDiv.classList.add('card-info'); let marketLinkHTML = '';
+                    if (card.tcgplayer && card.tcgplayer.url) { const affiliateUrl = card.tcgplayer.url; marketLinkHTML = `<a href="${affiliateUrl}" class="market-link" target="_blank" rel="noopener noreferrer" title="View ${card.name} from ${card.set.name} on TCGplayer">View on TCGplayer</a>`; }
+                    infoDiv.innerHTML = `<strong>${card.set.name}</strong><span>Rarity: ${card.rarity || 'Common'}</span>${marketLinkHTML}`;
+                    cardContainer.appendChild(img); cardContainer.appendChild(infoDiv); resultsDiv.appendChild(cardContainer);
+                } else { console.warn("Skipping card due to missing data:", card.id, card.name, card.set?.name, card.images?.small); }
             });
         }
 
-        // --- renderPaginationControls function (unchanged - uses stored terms) ---
+        // --- renderPaginationControls function (unchanged) ---
          function renderPaginationControls() {
-            paginationControlsDiv.innerHTML = '';
-            if (totalPages <= 1) return;
-            const prevButton = document.createElement('button');
-            prevButton.textContent = '← Previous';
-            prevButton.classList.add('pagination-button');
-            prevButton.disabled = (currentPage === 1);
-            prevButton.setAttribute('aria-label', 'Go to previous page');
-            prevButton.addEventListener('click', () => { if (currentPage > 1) fetchCards(currentPokemonName, currentSetName, currentPage - 1); });
-            const pageInfo = document.createElement('span');
-            pageInfo.id = 'page-info';
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next →';
-            nextButton.classList.add('pagination-button');
-            nextButton.disabled = (currentPage >= totalPages);
-            nextButton.setAttribute('aria-label', 'Go to next page');
-            nextButton.addEventListener('click', () => { if (currentPage < totalPages) fetchCards(currentPokemonName, currentSetName, currentPage + 1); });
-            paginationControlsDiv.appendChild(prevButton);
-            paginationControlsDiv.appendChild(pageInfo);
-            paginationControlsDiv.appendChild(nextButton);
+            paginationControlsDiv.innerHTML = ''; if (totalPages <= 1) return;
+            const prevButton = document.createElement('button'); prevButton.textContent = '← Previous'; prevButton.classList.add('pagination-button'); prevButton.disabled = (currentPage === 1); prevButton.setAttribute('aria-label', 'Go to previous page'); prevButton.addEventListener('click', () => { if (currentPage > 1) fetchCards(currentPokemonName, currentSetName, currentPage - 1); });
+            const pageInfo = document.createElement('span'); pageInfo.id = 'page-info'; pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            const nextButton = document.createElement('button'); nextButton.textContent = 'Next →'; nextButton.classList.add('pagination-button'); nextButton.disabled = (currentPage >= totalPages); nextButton.setAttribute('aria-label', 'Go to next page'); nextButton.addEventListener('click', () => { if (currentPage < totalPages) fetchCards(currentPokemonName, currentSetName, currentPage + 1); });
+            paginationControlsDiv.appendChild(prevButton); paginationControlsDiv.appendChild(pageInfo); paginationControlsDiv.appendChild(nextButton);
         }
 
-        function clearPagination() {
-            paginationControlsDiv.innerHTML = '';
-        }
+        function clearPagination() { paginationControlsDiv.innerHTML = ''; }
 
         // --- Modal Functions (unchanged) ---
         function openModal(imageUrl) { if (imageUrl) { modalImage.src = imageUrl; modal.style.display = "block"; document.body.style.overflow = 'hidden'; } }
         function closeModal() { modal.style.display = "none"; modalImage.src = ""; document.body.style.overflow = ''; }
 
         // --- Event Listeners (Updated for two inputs and autocomplete) ---
-        searchButton.addEventListener('click', () => {
-            const nameTerm = pokemonNameInput.value;
-            const setTerm = setNameInput.value;
-            hideAllSuggestions(); // Hide suggestions on explicit search
-            fetchCards(nameTerm, setTerm, 1);
-        });
+        searchButton.addEventListener('click', () => { const nameTerm = pokemonNameInput.value; const setTerm = setNameInput.value; hideAllSuggestions(); fetchCards(nameTerm, setTerm, 1); });
+        pokemonNameInput.addEventListener('keypress', handleEnterKey); setNameInput.addEventListener('keypress', handleEnterKey);
+        function handleEnterKey(event) { if (event.key === 'Enter') { event.preventDefault(); const nameTerm = pokemonNameInput.value; const setTerm = setNameInput.value; hideAllSuggestions(); fetchCards(nameTerm, setTerm, 1); } }
 
-        // Enter key listener attached to both inputs
-        pokemonNameInput.addEventListener('keypress', handleEnterKey);
-        setNameInput.addEventListener('keypress', handleEnterKey);
-
-        function handleEnterKey(event) {
-           if (event.key === 'Enter') {
-                event.preventDefault();
-                const nameTerm = pokemonNameInput.value;
-                const setTerm = setNameInput.value;
-                hideAllSuggestions(); // Hide suggestions on enter
-                fetchCards(nameTerm, setTerm, 1);
-            }
-        }
-
-        // --- Autocomplete Event Listeners (Separate for each input) ---
-        pokemonNameInput.addEventListener('input', () => {
-            const inputText = pokemonNameInput.value.trim();
-            displaySuggestions(inputText, pokemonNames, pokemonNameInput, pokemonSuggestionsContainer);
-            hideSuggestions(setSuggestionsContainer); // Hide other suggestions
-        });
-
-        setNameInput.addEventListener('input', () => {
-            const inputText = setNameInput.value.trim();
-            displaySuggestions(inputText, setNames, setNameInput, setSuggestionsContainer);
-             hideSuggestions(pokemonSuggestionsContainer); // Hide other suggestions
-        });
-
-        // Hide suggestions when clicking outside relevant areas
-         document.addEventListener('click', (event) => {
-            // Check if click is outside Pokémon input AND its suggestions
-             if (!pokemonNameInput.contains(event.target) && !pokemonSuggestionsContainer.contains(event.target)) {
-                 hideSuggestions(pokemonSuggestionsContainer);
-             }
-             // Check if click is outside Set input AND its suggestions
-             if (!setNameInput.contains(event.target) && !setSuggestionsContainer.contains(event.target)) {
-                 hideSuggestions(setSuggestionsContainer);
-             }
-         });
-
-        // Hide specific suggestion box on blur, delayed
-        pokemonNameInput.addEventListener('blur', () => {
-             setTimeout(() => { if (!pokemonSuggestionsContainer.contains(document.activeElement)) hideSuggestions(pokemonSuggestionsContainer); }, 150);
-        });
-        setNameInput.addEventListener('blur', () => {
-             setTimeout(() => { if (!setSuggestionsContainer.contains(document.activeElement)) hideSuggestions(setSuggestionsContainer); }, 150);
-        });
-
-        // Hide specific suggestion box on Escape key
+        // --- Autocomplete Event Listeners ---
+        pokemonNameInput.addEventListener('input', () => { displaySuggestions(pokemonNameInput.value.trim(), pokemonNames, pokemonNameInput, pokemonSuggestionsContainer); hideSuggestions(setSuggestionsContainer); });
+        setNameInput.addEventListener('input', () => { displaySuggestions(setNameInput.value.trim(), setNames, setNameInput, setSuggestionsContainer); hideSuggestions(pokemonSuggestionsContainer); });
+        document.addEventListener('click', (event) => { if (!pokemonNameInput.contains(event.target) && !pokemonSuggestionsContainer.contains(event.target)) hideSuggestions(pokemonSuggestionsContainer); if (!setNameInput.contains(event.target) && !setSuggestionsContainer.contains(event.target)) hideSuggestions(setSuggestionsContainer); });
+        pokemonNameInput.addEventListener('blur', () => { setTimeout(() => { if (!pokemonSuggestionsContainer.contains(document.activeElement)) hideSuggestions(pokemonSuggestionsContainer); }, 150); });
+        setNameInput.addEventListener('blur', () => { setTimeout(() => { if (!setSuggestionsContainer.contains(document.activeElement)) hideSuggestions(setSuggestionsContainer); }, 150); });
         pokemonNameInput.addEventListener('keydown', (event) => { if (event.key === 'Escape') hideSuggestions(pokemonSuggestionsContainer); });
         setNameInput.addEventListener('keydown', (event) => { if (event.key === 'Escape') hideSuggestions(setSuggestionsContainer); });
 
+        // --- Modal Event Listeners ---
+        closeModalSpan.addEventListener('click', closeModal); modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); }); window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.style.display === 'block') closeModal(); });
 
-        // --- Modal Event Listeners (unchanged) ---
-        closeModalSpan.addEventListener('click', closeModal);
-        modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-        window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.style.display === 'block') closeModal(); });
-
-        // --- Footer Credits Function (unchanged) ---
+        // --- Footer Credits Function ---
         function addFooterCredits() { if(footerElement) { const currentYear = new Date().getFullYear(); footerElement.innerHTML = `Made with <span class="heart">❤️</span> by <span class="creator-name">Amadou</span> © ${currentYear}. Happy Collecting! <br> Card data powered by <a href="https://pokemontcg.io/" target="_blank" rel="noopener noreferrer">pokemontcg.io API</a>. Market links go to TCGplayer.com.`; } else { console.warn("Footer element (#page-footer) not found."); } }
         addFooterCredits();
 
