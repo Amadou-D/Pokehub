@@ -2,9 +2,7 @@
 
 A simple, single-page web application to search for and view Pokémon Trading Card Game (TCG) cards. Enter a Pokémon name or a Set name to browse cards, view their images, and get a direct link to their TCGplayer market page.
 
-![Screenshot Placeholder - Add a screenshot of the app interface here]
-*(Optionally, replace the line above with an actual screenshot: `![App Screenshot](path/to/your/screenshot.png)`)*
-
+https://amadou-d.github.io/Pokehub/
 ## Features
 
 *   **Card Search:** Search for cards by Pokémon name (e.g., "Pikachu", "Charizard") or Set name (e.g., "Base Set", "Evolving Skies", "151").
