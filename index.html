@@ -16,12 +16,9 @@
     <style>
         /* --- Base Variables (Fallback/Structure) --- */
         :root {
-             /* Original core colors (kept for fallback/base title) */
             --pokemon-red: #FF0000;
             --pokemon-blue: #3B4CCA;
             --pokemon-yellow: #FFDE00;
-
-            /* Standard structural vars */
             --dark-charcoal: #333333;
             --medium-grey: #6c757d;
             --light-grey: #f8f9fa;
@@ -51,7 +48,7 @@
              --theme-input-focus-border: var(--pokemon-blue);
              --theme-input-focus-shadow: rgba(59, 76, 202, 0.2);
              --theme-card-bg: var(--white);
-             --theme-card-info-bg: #f9f9f9;
+             --theme-card-info-bg: #f9f9f9; /* Original light grey */
              --theme-card-border: #eee;
              --theme-card-shadow: rgba(0,0,0,0.1);
              --theme-placeholder-bg: url('https://assets.pokemon.com/assets/cms2/img/misc/virtual-backgrounds/masters/forest.jpg');
@@ -85,14 +82,11 @@
             --theme-heading-shadow: #f8d030;
             --theme-button-primary-bg: linear-gradient(145deg, #f08030, #c06020);
             --theme-button-primary-hover-bg: linear-gradient(145deg, #ffa050, #f08030);
-            --theme-button-primary-text: var(--white);
             --theme-button-pagination-bg: linear-gradient(145deg, #c8a17f, #8f6b50);
             --theme-button-pagination-hover-bg: linear-gradient(145deg, #d8b18f, #c8a17f);
-            --theme-button-pagination-text: var(--white);
             --theme-input-border: #c8a17f;
             --theme-input-focus-border: #8f6b50;
             --theme-input-focus-shadow: rgba(143, 107, 80, 0.2);
-            --theme-card-bg: var(--white);
             --theme-card-info-bg: #fdf6e9;
             --theme-card-border: #e0d8cc;
             --theme-card-shadow: rgba(143, 107, 80, 0.15);
@@ -104,7 +98,6 @@
             --theme-loader-top: #f85888;
             --theme-market-link-bg: #f8d030;
             --theme-market-link-hover-bg: color-mix(in srgb, #f8d030 85%, black);
-            --theme-market-link-text: var(--dark-charcoal);
             --theme-hr-color: #c8a17f;
             --theme-decor-opacity: 0.25;
             --theme-decor-image-left: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/133.png');
@@ -127,10 +120,8 @@
             --theme-heading-shadow: #ff5f98;
             --theme-button-primary-bg: linear-gradient(145deg, #7c45a3, #502d6b);
             --theme-button-primary-hover-bg: linear-gradient(145deg, #9b60c7, #7c45a3);
-            --theme-button-primary-text: var(--white);
             --theme-button-pagination-bg: linear-gradient(145deg, #7c45a3, #502d6b);
             --theme-button-pagination-hover-bg: linear-gradient(145deg, #9b60c7, #7c45a3);
-            --theme-button-pagination-text: var(--white);
             --theme-input-border: #7c45a3;
             --theme-input-focus-border: #ff5f98;
             --theme-input-focus-shadow: rgba(255, 95, 152, 0.2);
@@ -158,86 +149,121 @@
 
         /* --- Dragonite Theme Variables --- */
         body.theme-dragonite {
-            --theme-bg-gradient: linear-gradient(135deg, #fceabb 0%, #f8b500 100%); /* Yellow/Orange Sky */
-            --theme-container-bg: rgba(255, 255, 255, 0.9); /* White clouds */
+            --theme-bg-gradient: linear-gradient(135deg, #fceabb 0%, #f8b500 100%);
+            --theme-container-bg: rgba(255, 255, 255, 0.9);
             --theme-container-border: rgba(248, 181, 0, 0.5);
             --theme-container-shadow: rgba(100, 70, 20, 0.2);
-            --theme-text-primary: #5c4b33; /* Darker orange/brown */
+            --theme-text-primary: #5c4b33;
             --theme-text-secondary: #a08b5f;
-            --theme-text-accent: #60a0d8; /* Wing Blue */
-            --theme-text-heading: #e87c1c; /* Dragonite Orange */
-            --theme-heading-shadow: #fceabb; /* Light yellow */
-            --theme-button-primary-bg: linear-gradient(145deg, #e87c1c, #c06010); /* Orange */
+            --theme-text-accent: #60a0d8;
+            --theme-text-heading: #e87c1c;
+            --theme-heading-shadow: #fceabb;
+            --theme-button-primary-bg: linear-gradient(145deg, #e87c1c, #c06010);
             --theme-button-primary-hover-bg: linear-gradient(145deg, #ff9c3c, #e87c1c);
-            --theme-button-primary-text: var(--white);
-            --theme-button-pagination-bg: linear-gradient(145deg, #60a0d8, #4070a8); /* Blue */
+            --theme-button-pagination-bg: linear-gradient(145deg, #60a0d8, #4070a8);
             --theme-button-pagination-hover-bg: linear-gradient(145deg, #80c0f8, #60a0d8);
-            --theme-button-pagination-text: var(--white);
             --theme-input-border: #f8b500;
             --theme-input-focus-border: #e87c1c;
             --theme-input-focus-shadow: rgba(232, 124, 28, 0.2);
-            --theme-card-bg: var(--white);
-            --theme-card-info-bg: #fff8e1; /* Light Cream */
+            --theme-card-info-bg: #fff8e1;
             --theme-card-border: #ffe0b2;
             --theme-card-shadow: rgba(232, 124, 28, 0.15);
-            --theme-placeholder-bg: url('https://pbs.twimg.com/media/Exrkz50VoAQv3Qp.jpg'); /* Example sky/cloud bg */
-            --theme-placeholder-overlay: rgba(255, 255, 255, 0.7); /* White overlay */
-            --theme-placeholder-message-bg: rgba(232, 124, 28, 0.85); /* Orange message bg */
+            --theme-placeholder-bg: url('https://pbs.twimg.com/media/Exrkz50VoAQv3Qp.jpg');
+            --theme-placeholder-overlay: rgba(255, 255, 255, 0.7);
+            --theme-placeholder-message-bg: rgba(232, 124, 28, 0.85);
             --theme-placeholder-message-text: var(--white);
             --theme-loader-border: #f8b500;
             --theme-loader-top: #e87c1c;
-            --theme-market-link-bg: #60a0d8; /* Blue market link */
+            --theme-market-link-bg: #60a0d8;
             --theme-market-link-hover-bg: color-mix(in srgb, #60a0d8 85%, black);
             --theme-market-link-text: var(--white);
             --theme-hr-color: #f8b500;
             --theme-decor-opacity: 0.2;
-            --theme-decor-image-left: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/149.png'); /* Dragonite */
-            --theme-decor-image-right: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/148.png'); /* Dragonair */
-            --theme-accent-heart: #e87c1c; /* Orange heart */
+            --theme-decor-image-left: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/149.png');
+            --theme-decor-image-right: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/148.png');
+            --theme-accent-heart: #e87c1c;
             --theme-error-bg: rgba(232, 124, 28, 0.1);
             --theme-error-text: #c06010;
         }
 
         /* --- Charizard Theme Variables --- */
         body.theme-charizard {
-            --theme-bg-gradient: linear-gradient(135deg, #f08030 0%, #a02c2c 100%); /* Orange to Maroon */
-            --theme-container-bg: rgba(255, 235, 215, 0.9); /* Light cream/orange */
+            --theme-bg-gradient: linear-gradient(135deg, #f08030 0%, #a02c2c 100%);
+            --theme-container-bg: rgba(255, 235, 215, 0.9);
             --theme-container-border: rgba(240, 128, 48, 0.5);
             --theme-container-shadow: rgba(160, 44, 44, 0.3);
-            --theme-text-primary: #4d1a00; /* Dark brown */
+            --theme-text-primary: #4d1a00;
             --theme-text-secondary: #a05c30;
-            --theme-text-accent: #5888a8; /* Wing Blue */
-            --theme-text-heading: #f08030; /* Charizard Orange */
-            --theme-heading-shadow: #a02c2c; /* Maroon */
-            --theme-button-primary-bg: linear-gradient(145deg, #e04000, #a02000); /* Deeper Red/Orange */
+            --theme-text-accent: #5888a8;
+            --theme-text-heading: #f08030;
+            --theme-heading-shadow: #a02c2c;
+            --theme-button-primary-bg: linear-gradient(145deg, #e04000, #a02000);
             --theme-button-primary-hover-bg: linear-gradient(145deg, #ff6020, #e04000);
-            --theme-button-primary-text: var(--white);
-            --theme-button-pagination-bg: linear-gradient(145deg, #f08030, #c06020); /* Orange */
+            --theme-button-pagination-bg: linear-gradient(145deg, #f08030, #c06020);
             --theme-button-pagination-hover-bg: linear-gradient(145deg, #ff9c3c, #f08030);
-            --theme-button-pagination-text: var(--white);
             --theme-input-border: #f08030;
             --theme-input-focus-border: #a02c2c;
             --theme-input-focus-shadow: rgba(240, 128, 48, 0.25);
-            --theme-card-bg: var(--white);
-            --theme-card-info-bg: #fff0e0; /* Very light orange */
+            --theme-card-info-bg: #fff0e0;
             --theme-card-border: #ffccaa;
             --theme-card-shadow: rgba(240, 128, 48, 0.2);
-            --theme-placeholder-bg: url('https://wallpapercave.com/wp/wp6694326.jpg'); /* Example volcanic bg */
-            --theme-placeholder-overlay: rgba(255, 160, 80, 0.6); /* Orange overlay */
-            --theme-placeholder-message-bg: rgba(160, 44, 44, 0.85); /* Maroon message bg */
+            --theme-placeholder-bg: url('https://wallpapercave.com/wp/wp6694326.jpg');
+            --theme-placeholder-overlay: rgba(255, 160, 80, 0.6);
+            --theme-placeholder-message-bg: rgba(160, 44, 44, 0.85);
             --theme-placeholder-message-text: var(--white);
             --theme-loader-border: #f08030;
             --theme-loader-top: #a02c2c;
-            --theme-market-link-bg: #5888a8; /* Wing Blue */
+            --theme-market-link-bg: #5888a8;
             --theme-market-link-hover-bg: color-mix(in srgb, #5888a8 85%, black);
             --theme-market-link-text: var(--white);
             --theme-hr-color: #f08030;
             --theme-decor-opacity: 0.25;
-            --theme-decor-image-left: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'); /* Charizard */
-            --theme-decor-image-right: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'); /* Charmeleon */
-            --theme-accent-heart: #f08030; /* Orange heart */
+            --theme-decor-image-left: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png');
+            --theme-decor-image-right: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png');
+            --theme-accent-heart: #f08030;
             --theme-error-bg: rgba(160, 44, 44, 0.15);
             --theme-error-text: #a02c2c;
+        }
+
+        /* --- Pikachu Theme Variables --- */
+        body.theme-pikachu {
+            --theme-bg-gradient: linear-gradient(135deg, #fff352 0%, #ffcc00 100%);
+            --theme-container-bg: rgba(255, 250, 230, 0.92);
+            --theme-container-border: rgba(204, 153, 0, 0.5);
+            --theme-container-shadow: rgba(102, 77, 0, 0.25);
+            --theme-text-primary: #4d3d00;
+            --theme-text-secondary: #997a00;
+            --theme-text-accent: #e60000;
+            --theme-text-heading: #4d3d00;
+            --theme-heading-shadow: #e60000;
+            --theme-button-primary-bg: linear-gradient(145deg, #f8d030, #c1a000);
+            --theme-button-primary-hover-bg: linear-gradient(145deg, #ffea50, #f8d030);
+            --theme-button-primary-text: #4d3d00;
+            --theme-button-pagination-bg: linear-gradient(145deg, #f8d030, #c1a000);
+            --theme-button-pagination-hover-bg: linear-gradient(145deg, #ffea50, #f8d030);
+            --theme-button-pagination-text: #4d3d00;
+            --theme-input-border: #f8d030;
+            --theme-input-focus-border: #e60000;
+            --theme-input-focus-shadow: rgba(230, 0, 0, 0.2);
+            --theme-card-info-bg: #fffacd;
+            --theme-card-border: #ffe8a1;
+            --theme-card-shadow: rgba(204, 153, 0, 0.2);
+            --theme-placeholder-bg: radial-gradient(ellipse at center, #fff352cc 0%, #ffcc00cc 100%); /* Yellow gradient, slightly transparent */
+            --theme-placeholder-overlay: rgba(255, 255, 255, 0.1); /* Minimal overlay */
+            --theme-placeholder-message-bg: rgba(77, 61, 0, 0.8);
+            --theme-placeholder-message-text: #fff352;
+            --theme-loader-border: #f8d030;
+            --theme-loader-top: #e60000;
+            --theme-market-link-bg: #e60000;
+            --theme-market-link-hover-bg: color-mix(in srgb, #e60000 85%, black);
+            --theme-market-link-text: var(--white);
+            --theme-hr-color: #f8d030;
+            --theme-decor-opacity: 0.2;
+            --theme-decor-image-left: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/025.png');
+            --theme-decor-image-right: url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/026.png');
+            --theme-accent-heart: #e60000;
+            --theme-error-bg: rgba(230, 0, 0, 0.1);
+            --theme-error-text: #b30000;
         }
 
 
@@ -283,19 +309,30 @@
         main { flex-grow: 1; position: relative; }
 
         /* Theme Switcher */
-        #theme-switcher { text-align: center; margin-bottom: 25px; margin-top: -15px; }
+        #theme-switcher {
+            text-align: center;
+            margin-bottom: 25px;
+            margin-top: -15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
         .theme-button {
             background: var(--theme-button-secondary-bg, var(--medium-grey));
             color: var(--theme-button-secondary-text, var(--white));
-            border: 1px solid rgba(0,0,0,0.2); padding: 6px 12px; margin: 0 5px;
+            border: 1px solid rgba(0,0,0,0.2); padding: 6px 12px;
+            margin: 0;
             border-radius: var(--border-radius-small); cursor: pointer; font-size: 0.8rem;
             font-family: 'Lato', sans-serif; transition: all 0.2s ease; opacity: 0.7;
+             flex-shrink: 0;
         }
         .theme-button:hover, .theme-button.active { opacity: 1; transform: scale(1.05); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .theme-button[data-theme="eevee"] { background-color: #c8a17f; color: #fff;}
         .theme-button[data-theme="gengar"] { background-color: #7c45a3; color: #fff;}
         .theme-button[data-theme="dragonite"] { background-color: #e87c1c; color: #fff;}
         .theme-button[data-theme="charizard"] { background-color: #f08030; color: #fff;}
+        .theme-button[data-theme="pikachu"] { background-color: #f8d030; color: #4d3d00;}
 
 
         /* H1 uses theme vars */
@@ -361,13 +398,11 @@
         #results.results-placeholder {
             background-color: var(--theme-placeholder-overlay);
             background-image: var(--theme-placeholder-bg);
-             background-size: cover; /* Default for images */
+             background-size: cover;
              background-position: center;
              body.theme-eevee & { background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; }
              body.theme-gengar & { background-size: 40px 40px; background-position: 0 0, 0 0; }
-             /* Add specific sizes for Dragonite/Charizard if bg is a pattern */
-             /* body.theme-dragonite & { background-size: cover; } */
-             /* body.theme-charizard & { background-size: cover; } */
+             body.theme-pikachu & { background-image: radial-gradient(ellipse at center, #fff352cc 0%, #ffcc00cc 100%); } /* Override for gradient */
 
             border-radius: var(--border-radius-main); min-height: 300px; display: flex; align-items: center; justify-content: center;
             transition: background var(--transition-speed) ease; padding-top: 0; border: 1px dashed var(--theme-input-border);
@@ -436,6 +471,7 @@
         body.theme-gengar .pagination-button:hover:not(:disabled) { background: linear-gradient(145deg, #9b60c7, #7c45a3); }
         body.theme-dragonite .pagination-button:hover:not(:disabled) { background: linear-gradient(145deg, #80c0f8, #60a0d8); }
         body.theme-charizard .pagination-button:hover:not(:disabled) { background: linear-gradient(145deg, #ff9c3c, #f08030); }
+        body.theme-pikachu .pagination-button:hover:not(:disabled) { background: linear-gradient(145deg, #ffea50, #f8d030); }
 
         .pagination-button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0, 0.3); }
         .pagination-button:disabled { background: var(--medium-grey); color: #ccc; cursor: not-allowed; opacity: 0.7; box-shadow: none; }
@@ -467,10 +503,13 @@
              body { padding: 15px 5px; }
              #container { padding: 25px 15px; margin: 20px auto; min-height: calc(100vh - 40px); }
              h1 { font-size: 1.4rem; margin-bottom: 30px; }
-             #theme-switcher { margin-bottom: 15px; margin-top: -5px; }
-             #search-controls { flex-direction: column; align-items: center; gap: 10px; /* Reduce gap */ }
+             /* Theme Switcher Mobile */
+             #theme-switcher { margin-bottom: 20px; gap: 5px 8px; }
+             .theme-button { padding: 4px 8px; font-size: 0.7rem; margin: 2px 0;}
+
+             #search-controls { flex-direction: column; align-items: center; gap: 10px; }
              .search-field-group { width: 90%; max-width: 350px; align-items: center; }
-             #searchButton { width: 90%; max-width: 350px; align-self: center; margin-top: 5px; height: 47px; } /* Keep height fix */
+             #searchButton { width: 90%; max-width: 350px; align-self: center; margin-top: 5px; height: 47px; }
              #search-controls label { text-align: center; margin-left: 0; }
              .suggestions-container { position: relative; top: auto; left: auto; right: auto; width: 100%; margin-top: 2px; border-radius: var(--border-radius-main); border: 1px solid var(--theme-input-border); max-height: 150px; }
              #results { gap: 15px; } #results.results-placeholder { min-height: 250px; }
@@ -481,22 +520,19 @@
 
     </style>
 </head>
-<body class="theme-eevee"> 
-
-
+<body class="theme-eevee">
 
     <div id="container">
         <main>
-            
              <div id="theme-switcher">
                  <button class="theme-button" data-theme="eevee">Eevee</button>
                  <button class="theme-button" data-theme="gengar">Gengar</button>
                  <button class="theme-button" data-theme="dragonite">Dragonite</button>
                  <button class="theme-button" data-theme="charizard">Charizard</button>
+                 <button class="theme-button" data-theme="pikachu">Pikachu</button>
              </div>
 
             <h1>Pokémon TCG Dex</h1>
-
 
             <div id="search-controls">
                 <div class="search-field-group">
@@ -512,12 +548,9 @@
                 <button id="searchButton">Search</button>
             </div>
 
-        
             <div id="results">
-                
             </div>
 
-          
              <div id="pagination-controls"></div>
 
         </main>
@@ -525,10 +558,8 @@
         <footer class="page-footer" id="page-footer"></footer>
     </div>
 
-    <!-- Loader (Fixed Position) -->
     <div id="loader"></div>
 
-    <!-- Modal -->
     <div id="modal">
       <span id="close-modal" title="Close">×</span>
       <div id="modal-content">
@@ -537,7 +568,7 @@
     </div>
 
     <script>
-        // --- Element References ---
+        // Element References
         const pokemonNameInput = document.getElementById('pokemonNameInput');
         const setNameInput = document.getElementById('setNameInput');
         const searchButton = document.getElementById('searchButton');
@@ -560,8 +591,7 @@
         let currentSetName = '';
         const pageSize = 60;
 
-        // --- Autocomplete Data ---
-        // --- FULL LIST RESTORED ---
+        // Autocomplete Data
         const pokemonNames = [
             "Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle", "Blastoise",
             "Caterpie", "Metapod", "Butterfree", "Weedle", "Kakuna", "Beedrill", "Pidgey", "Pidgeotto", "Pidgeot",
@@ -741,18 +771,14 @@
 
         // --- Theme Handling ---
         const THEME_STORAGE_KEY = 'pokemonTcgDexTheme';
-        const DEFAULT_THEME = 'eevee'; // Set Eevee as default
+        const DEFAULT_THEME = 'eevee';
 
         function applyTheme(themeName) {
-            // Remove existing theme classes from body
-            document.body.classList.remove('theme-eevee', 'theme-gengar', 'theme-dragonite', 'theme-charizard');
-            // Add the new theme class to body
+            document.body.classList.remove('theme-eevee', 'theme-gengar', 'theme-dragonite', 'theme-charizard', 'theme-pikachu');
             document.body.classList.add(`theme-${themeName}`);
-            // Update active button state
             themeButtons.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.theme === themeName);
             });
-            // Save theme preference
             try {
                 localStorage.setItem(THEME_STORAGE_KEY, themeName);
             } catch (e) {
@@ -765,8 +791,7 @@
             let savedTheme = DEFAULT_THEME;
              try {
                  const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-                 // Validate the stored theme
-                 if (storedTheme && ['eevee', 'gengar', 'dragonite', 'charizard'].includes(storedTheme)) {
+                 if (storedTheme && ['eevee', 'gengar', 'dragonite', 'charizard', 'pikachu'].includes(storedTheme)) {
                     savedTheme = storedTheme;
                  }
              } catch (e) {
@@ -790,7 +815,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             showInitialMessage();
             fetchSetNames();
-            loadTheme(); // Load theme last
+            loadTheme();
         });
 
         // --- showInitialMessage ---
