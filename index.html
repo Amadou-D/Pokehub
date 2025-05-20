@@ -715,7 +715,7 @@
 
         let setNames = [];
 
-        // --- Function to Fetch Set Names ---
+        // --- Function to Fetch Set Names 
         async function fetchSetNames() {
             const setsApiUrl = 'https://api.pokemontcg.io/v2/sets?select=name&orderBy=releaseDate';
             try {
@@ -730,7 +730,7 @@
             }
         }
 
-        // --- Function to Show/Hide Suggestions ---
+        // --- Function to Show/Hide Suggestions 
         function displaySuggestions(inputText, suggestionsList, targetInput, targetContainer) {
             targetContainer.innerHTML = '';
             if (inputText.length < 1 || suggestionsList.length === 0) {
