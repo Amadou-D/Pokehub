@@ -625,6 +625,7 @@
             console.log("Starting to fetch all card names for autocomplete...");
             const uniqueCardNames = new Set();
             const apiPageSize = 250; // Max page size for the API
+            const batchSize = 10; // Number of parallel requests to make at once
 
             try {
                 // Fetch first page to get total count
@@ -641,20 +642,37 @@
 
                 showInitialMessage(true, 1, totalPages);
 
-                // Fetch remaining pages sequentially to avoid rate-limiting
-                for (let page = 2; page <= totalPages; page++) {
-                    const url = `https://api.pokemontcg.io/v2/cards?select=name&page=${page}&pageSize=${apiPageSize}`;
-                    const response = await fetch(url);
-                     if (!response.ok) {
-                        console.warn(`Failed to fetch page ${page}. Status: ${response.status}. Skipping.`);
-                        continue; // Skip this page and continue with the next
-                    }
-                    const pageData = await response.json();
-                    if (pageData.data) {
-                        pageData.data.forEach(card => uniqueCardNames.add(card.name));
-                    }
-                    // Update progress indicator
-                    showInitialMessage(true, page, totalPages);
+                // Create a list of page numbers to fetch
+                const remainingPages = [];
+                for (let i = 2; i <= totalPages; i++) {
+                    remainingPages.push(i);
+                }
+
+                // Fetch remaining pages in parallel batches
+                for (let i = 0; i < remainingPages.length; i += batchSize) {
+                    const batch = remainingPages.slice(i, i + batchSize);
+                    const promises = batch.map(page => {
+                        const url = `https://api.pokemontcg.io/v2/cards?select=name&page=${page}&pageSize=${apiPageSize}`;
+                        return fetch(url).then(res => {
+                            if (!res.ok) {
+                                console.warn(`Failed to fetch page ${page}. Status: ${res.status}. Skipping.`);
+                                return null; // Return null for failed requests
+                            }
+                            return res.json();
+                        });
+                    });
+
+                    const results = await Promise.all(promises);
+
+                    results.forEach(pageData => {
+                        if (pageData && pageData.data) {
+                            pageData.data.forEach(card => uniqueCardNames.add(card.name));
+                        }
+                    });
+                    
+                    // Update progress indicator after each batch
+                    const lastPageInBatch = batch[batch.length - 1] || 1;
+                    showInitialMessage(true, lastPageInBatch, totalPages);
                 }
 
                 cardNames = Array.from(uniqueCardNames).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
